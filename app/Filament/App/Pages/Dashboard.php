@@ -19,6 +19,7 @@ class Dashboard extends Page
     {
         return Book::with('category')->latest()->take(12)->get();
     }
+}
 
     // protected function getHeaderActions(): array
     // {
@@ -28,4 +29,4 @@ class Dashboard extends Page
     //             ->size(ActionSize::Small),
     //     ];
     // }
-}
+
