@@ -18,7 +18,11 @@ class GoogleBooksService
     }
 
     public function searchBooks(string $query)
-    {
+    {       $que = trim($query);
+        if (empty($que)) {
+            Log::warning('Empty query sent to Google Books API');
+            return [];
+        }
         $response = Http::get($this->baseUrl, [
             'q' => $query,
             'key' => $this->apiKey,
