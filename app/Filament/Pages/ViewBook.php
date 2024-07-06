@@ -5,18 +5,24 @@ namespace App\Filament\Pages;
 use App\Models\Book;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
+use Illuminate\Support\Facades\Log;
 
 class ViewBook extends Page
 {
-    protected static bool $shouldRegisterNavigation = false; // This line prevents it from appearing in the menu
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static string $view = 'filament.pages.view-book';
+    
+    protected static bool $shouldRegisterNavigation = false;
 
-    public function mount(Book $book): void
+    public ?Book $record = null;
+
+    public function mount(): void
     {
-        $this->book = $book;
+        $recordId = request()->query('recordId');
+        Log::info('RecordId: ' . $recordId);
+        if ($recordId) {
+            $this->record = Book::findOrFail($recordId);
+            Log::info('Record: ' . json_encode($this->record));
+        }
     }
 
     protected function getHeaderActions(): array
@@ -24,12 +30,19 @@ class ViewBook extends Page
         return [
             Action::make('favorite')
                 ->icon('heroicon-o-heart')
-                ->action(fn () => $this->toggleFavorite()),
+                ->action(function () {
+                    $this->toggleFavorite();
+                    return '';  // Return an empty string instead of null
+                }),
             Action::make('add to cart')
                 ->icon('heroicon-o-shopping-cart')
-                ->action(fn () => $this->addToCart()),
+                ->action(function () {
+                    $this->addToCart();
+                    return '';  // Return an empty string instead of null
+                }),
         ];
     }
+
     protected function getFooterActions(): array
     {
         return [
@@ -42,11 +55,12 @@ class ViewBook extends Page
     private function toggleFavorite(): void
     {
         // Implement favorite logic here
+        Log::info('Toggle favorite called');
     }
 
     private function addToCart(): void
     {
         // Implement add to cart logic here
+        Log::info('Add to cart called');
     }
 }
-
