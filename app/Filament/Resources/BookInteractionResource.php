@@ -77,4 +77,8 @@ class BookInteractionResource extends Resource
             'edit' => Pages\EditBookInteraction::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+    {
+        return false;
+    }
 }

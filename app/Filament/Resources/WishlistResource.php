@@ -40,8 +40,11 @@ class WishlistResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->searchable()
                     ->visible(fn () => Auth::user()->hasAnyRole(['admin', 'manager'])),
+                Tables\Columns\ImageColumn::make('book.cover_image')
+                ->label('Cover')
+                ->url(fn ($record) => $record->book->cover_image),
                 Tables\Columns\TextColumn::make('book.title')
-                    ->searchable(),
+                ->label('Title'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

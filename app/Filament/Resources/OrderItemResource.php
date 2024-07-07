@@ -87,5 +87,10 @@ class OrderItemResource extends Resource
             'create' => Pages\CreateOrderItem::route('/create'),
             'edit' => Pages\EditOrderItem::route('/{record}/edit'),
         ];
+    }  
+    
+    public static function canViewAny(): bool
+    {
+        return false;
     }
 }
