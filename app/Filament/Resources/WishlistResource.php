@@ -9,7 +9,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Filters\SelectFilter;
 class WishlistResource extends Resource
 {
     protected static ?string $model = Wishlist::class;
@@ -22,7 +25,8 @@ class WishlistResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
-                    ->required(),
+                    ->required()
+                    ->disabled(fn () => Auth::user()->hasRole('user')), // Disable for user role
                 Forms\Components\Select::make('book_id')
                     ->relationship('book', 'title')
                     ->required(),
@@ -34,7 +38,8 @@ class WishlistResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->searchable(),
+                    ->searchable()
+                    ->visible(fn () => Auth::user()->hasAnyRole(['admin', 'manager'])),
                 Tables\Columns\TextColumn::make('book.title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -43,15 +48,22 @@ class WishlistResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('user')
+                ->relationship('user', 'name')
+                ->searchable()
+                ->multiple()
+                ->visible(fn () => auth()->user()->hasAnyRole(['admin', 'manager']))
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => Auth::user()->hasAnyRole(['admin']) || (Auth::user()->hasRole('user') && $record->user_id === Auth::id())),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($record) => Auth::user()->hasAnyRole(['admin']) || $record->user_id === Auth::id()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn (): bool => auth()->user()->hasAnyRole(['admin'])),
                 ]),
             ]);
     }
@@ -67,8 +79,33 @@ class WishlistResource extends Resource
     {
         return [
             'index' => Pages\ListWishlists::route('/'),
-            'create' => Pages\CreateWishlist::route('/create'),
             'edit' => Pages\EditWishlist::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (Auth::user()->hasRole('user')) {
+            $query->where('user_id', Auth::id());
+        }
+
+        return $query;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false; // Disable manual creation of wishlist items
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()->hasAnyRole(['admin', 'manager']) || $record->user_id === Auth::id();
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()->hasAnyRole(['admin']) || (Auth::user()->hasRole('user') && $record->user_id === Auth::id());
     }
 }

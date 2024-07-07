@@ -10,10 +10,12 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Panel; 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Policies\UserPolicy;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
+    public static string $policyName = UserPolicy::class;
     /**
      * The attributes that are mass assignable.
      *
