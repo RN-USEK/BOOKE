@@ -100,6 +100,7 @@ class ViewBook extends Page
         }
 
         Session::put('cart', $cart);
+        $this->dispatch('cart-updated');
     }
 
     public function isInCart()
@@ -141,5 +142,9 @@ class ViewBook extends Page
             unset($cart[$bookId]);
             Session::put('cart', $cart);
         }
+    }
+        public function proceedToCheckout()
+    {
+        return redirect()->route('filament.app.pages.checkout');
     }
 }

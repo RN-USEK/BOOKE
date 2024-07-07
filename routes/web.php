@@ -16,6 +16,6 @@ use App\Filament\Pages\ViewBook;
 
 
 // Route::get('/', [BookController::class, 'index'])->name('home');
-Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+// Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
 // Route::get('/app/books/{book}', ViewBook::class)->name('filament.app.books.view');

@@ -18,6 +18,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Pages\ViewBook;
+use App\Filament\Pages\Checkout;
 class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -40,6 +41,7 @@ class AppPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 ViewBook::class,
+                Checkout::class,
             ])
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->widgets([
