@@ -49,9 +49,9 @@ class User extends Authenticatable
     {
         return $this->hasAnyRole(['admin', 'manager']);
     }
-    public function wishlist(): BelongsToMany
+    public function wishlist()
     {
-        return $this->belongsToMany(Book::class, 'wishlists')->withTimestamps();
+        return $this->hasMany(Wishlist::class);
     }
     public function reviews()
     {
@@ -61,4 +61,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(BookInteraction::class);
     }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }    
 }
