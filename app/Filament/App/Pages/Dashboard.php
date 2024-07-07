@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wishlist;
+use App\Services\CartService;
 class Dashboard extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -167,4 +168,46 @@ class Dashboard extends Page implements HasForms
             ->where('book_id', $bookId)
             ->exists();
     }
+
+    public function addToCart($bookId)
+    {
+        $book = Book::findOrFail($bookId);
+        CartService::add($book);
+        
+        Notification::make()
+            ->title('Added to Cart')
+            ->success()
+            ->send();
+    }
+
+    public function removeFromCart($bookId)
+    {
+        CartService::remove($bookId);
+        
+        Notification::make()
+            ->title('Removed from Cart')
+            ->success()
+            ->send();
+    }
+
+    public function updateCartQuantity($bookId, $quantity)
+    {
+        CartService::update($bookId, $quantity);
+        
+        Notification::make()
+            ->title('Cart Updated')
+            ->success()
+            ->send();
+    }
+
+    public function getCartContent()
+    {
+        return CartService::getContent();
+    }
+
+    public function getCartTotal()
+    {
+        return CartService::getTotal();
+    }
+
 }

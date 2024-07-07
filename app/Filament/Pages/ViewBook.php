@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Session;
+
 class ViewBook extends Page
 {
     protected static string $view = 'filament.pages.view-book';
@@ -38,14 +40,14 @@ class ViewBook extends Page
                     $this->toggleWishlist();
                     return '';
                 }),
-            // Action::make('add to cart')
-            //     ->icon(fn () => $this->isInCart() ? 'heroicon-s-shopping-cart' : 'heroicon-o-shopping-cart')
-            //     ->color(fn () => $this->isInCart() ? Color::Green : Color::Gray)
-            //     ->label(fn () => $this->isInCart() ? 'Remove from Cart' : 'Add to Cart')
-            //     ->action(function () {
-            //         $this->toggleCart();
-            //         return '';
-            //     }),
+            Action::make('add to cart')
+                ->icon(fn () => $this->isInCart() ? 'heroicon-s-shopping-cart' : 'heroicon-o-shopping-cart')
+                ->color(fn () => $this->isInCart() ? Color::Green : Color::Gray)
+                ->label(fn () => $this->isInCart() ? 'Remove from Cart' : 'Add to Cart')
+                ->action(function () {
+                    $this->toggleCart();
+                    return '';
+                }),
         ];
     }
 
@@ -83,9 +85,61 @@ class ViewBook extends Page
             ->exists();
     }
 
-    private function addToCart(): void
+    public function toggleCart()
     {
-        // Implement add to cart logic here
-        Log::info('Add to cart called');
+        $cart = Session::get('cart', []);
+
+        if (isset($cart[$this->record->id])) {
+            unset($cart[$this->record->id]);
+        } else {
+            $cart[$this->record->id] = [
+                'title' => $this->record->title,
+                'price' => $this->record->price,
+                'quantity' => 1,
+            ];
+        }
+
+        Session::put('cart', $cart);
+    }
+
+    public function isInCart()
+    {
+        $cart = Session::get('cart', []);
+        return isset($cart[$this->record->id]);
+    }
+
+    public function getCartContent()
+    {
+        return Session::get('cart', []);
+    }
+
+    public function getCartTotal()
+    {
+        $cart = Session::get('cart', []);
+        return array_sum(array_map(function($item) {
+            return $item['price'] * $item['quantity'];
+        }, $cart));
+    }
+
+    public function updateCartQuantity($bookId, $quantity)
+    {
+        $cart = Session::get('cart', []);
+        if (isset($cart[$bookId])) {
+            if ($quantity > 0) {
+                $cart[$bookId]['quantity'] = $quantity;
+            } else {
+                unset($cart[$bookId]);
+            }
+            Session::put('cart', $cart);
+        }
+    }
+
+    public function removeFromCart($bookId)
+    {
+        $cart = Session::get('cart', []);
+        if (isset($cart[$bookId])) {
+            unset($cart[$bookId]);
+            Session::put('cart', $cart);
+        }
     }
 }

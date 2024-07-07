@@ -60,4 +60,35 @@
     <div class="mt-4 max-w-2xl mx-auto"> <!-- Center the footer action as well -->
         {{ $this->getFooterActions()[0]->render() }}
     </div>
+    <!-- Cart Section -->
+    <div class="mt-8 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Your Cart</h2>
+        @php
+            $cartContent = $this->getCartContent();
+            $cartTotal = $this->getCartTotal();
+        @endphp
+
+        @if(count($cartContent) > 0)
+            @foreach($cartContent as $bookId => $item)
+                <div class="flex items-center justify-between border-b py-2">
+                    <div>
+                        <h3 class="font-semibold">{{ $item['title'] }}</h3>
+                        <p>Price: ${{ number_format($item['price'], 2) }}</p>
+                        <div class="flex items-center">
+                            <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] - 1 }})" class="px-2 py-1 bg-gray-200 rounded">-</button>
+                            <span class="mx-2">{{ $item['quantity'] }}</span>
+                            <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] + 1 }})" class="px-2 py-1 bg-gray-200 rounded">+</button>
+                        </div>
+                    </div>
+                    <button wire:click="removeFromCart({{ $bookId }})" class="text-red-500">Remove</button>
+                </div>
+            @endforeach
+            <div class="mt-4">
+                <p class="font-bold">Total: ${{ number_format($cartTotal, 2) }}</p>
+                <button class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Proceed to Checkout</button>
+            </div>
+        @else
+            <p>Your cart is empty.</p>
+        @endif
+    </div>
 </x-filament-panels::page>
