@@ -15,6 +15,8 @@ use App\Services\GoogleBooksService;
 use App\Services\GoogleVisionService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Wishlist;
 class Dashboard extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -131,5 +133,38 @@ class Dashboard extends Page implements HasForms
     public function getBooks()
     {
         return $this->searchResults ?? Book::with('category')->latest()->take(12)->get();
+    }
+
+    public function toggleWishlist($bookId)
+    {
+        $user = Auth::user();
+        $wishlistItem = Wishlist::where('user_id', $user->id)
+            ->where('book_id', $bookId)
+            ->first();
+
+        if ($wishlistItem) {
+            $wishlistItem->delete();
+            Notification::make()
+                ->title('Removed from Wishlist')
+                ->success()
+                ->send();
+        } else {
+            Wishlist::create([
+                'user_id' => $user->id,
+                'book_id' => $bookId,
+            ]);
+            Notification::make()
+                ->title('Added to Wishlist')
+                ->success()
+                ->send();
+        }
+    }
+
+    public function isInWishlist($bookId)
+    {
+        $user = Auth::user();
+        return Wishlist::where('user_id', $user->id)
+            ->where('book_id', $bookId)
+            ->exists();
     }
 }

@@ -6,7 +6,9 @@ use App\Models\Book;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Wishlist;
+use Illuminate\Support\Facades\Auth;
+use Filament\Support\Colors\Color;
 class ViewBook extends Page
 {
     protected static string $view = 'filament.pages.view-book';
@@ -24,22 +26,26 @@ class ViewBook extends Page
             Log::info('Record: ' . json_encode($this->record));
         }
     }
-
+    
     protected function getHeaderActions(): array
     {
         return [
             Action::make('favorite')
-                ->icon('heroicon-o-heart')
+                ->icon(fn () => $this->isInWishlist() ? 'heroicon-s-heart' : 'heroicon-o-heart')
+                ->color(fn () => $this->isInWishlist() ? Color::Red : Color::Gray)
+                ->label(fn () => $this->isInWishlist() ? 'Remove from Wishlist' : 'Add to Wishlist')
                 ->action(function () {
-                    $this->toggleFavorite();
-                    return '';  // Return an empty string instead of null
+                    $this->toggleWishlist();
+                    return '';
                 }),
-            Action::make('add to cart')
-                ->icon('heroicon-o-shopping-cart')
-                ->action(function () {
-                    $this->addToCart();
-                    return '';  // Return an empty string instead of null
-                }),
+            // Action::make('add to cart')
+            //     ->icon(fn () => $this->isInCart() ? 'heroicon-s-shopping-cart' : 'heroicon-o-shopping-cart')
+            //     ->color(fn () => $this->isInCart() ? Color::Green : Color::Gray)
+            //     ->label(fn () => $this->isInCart() ? 'Remove from Cart' : 'Add to Cart')
+            //     ->action(function () {
+            //         $this->toggleCart();
+            //         return '';
+            //     }),
         ];
     }
 
@@ -52,10 +58,29 @@ class ViewBook extends Page
         ];
     }
 
-    private function toggleFavorite(): void
+    public function toggleWishlist()
     {
-        // Implement favorite logic here
-        Log::info('Toggle favorite called');
+        $user = Auth::user();
+        $wishlistItem = Wishlist::where('user_id', $user->id)
+            ->where('book_id', $this->record->id)
+            ->first();
+
+        if ($wishlistItem) {
+            $wishlistItem->delete();
+        } else {
+            Wishlist::create([
+                'user_id' => $user->id,
+                'book_id' => $this->record->id,
+            ]);
+        }
+    }
+
+    public function isInWishlist()
+    {
+        $user = Auth::user();
+        return Wishlist::where('user_id', $user->id)
+            ->where('book_id', $this->record->id)
+            ->exists();
     }
 
     private function addToCart(): void
