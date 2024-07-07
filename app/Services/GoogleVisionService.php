@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Google\Cloud\Vision\V1\ImageAnnotatorClient;
+use Google\Cloud\Vision\V1\Feature\Type;
 use Illuminate\Support\Facades\Log;
 
 class GoogleVisionService
@@ -30,19 +31,20 @@ class GoogleVisionService
                 return [];
             }
 
-            $response = $client->labelDetection($image);
-            $labels = $response->getLabelAnnotations();
+            // Perform object localization
+            $response = $client->objectLocalization($image);
+            $objects = $response->getLocalizedObjectAnnotations();
 
-            $objects = [];
-            foreach ($labels as $label) {
-                $objects[] = $label->getDescription();
+            $detectedObjects = [];
+            foreach ($objects as $object) {
+                $detectedObjects[] = $object->getName();
             }
 
             $client->close();
 
-            Log::info('Object detection successful', ['objects' => $objects]);
+            Log::info('Object detection successful', ['objects' => $detectedObjects]);
 
-            return $objects;
+            return $detectedObjects;
         } catch (\Exception $e) {
             Log::error('Error in Google Vision API', [
                 'error' => $e->getMessage(),
