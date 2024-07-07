@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Panel; 
-
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -48,5 +48,17 @@ class User extends Authenticatable
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->hasAnyRole(['admin', 'manager']);
+    }
+    public function wishlist(): BelongsToMany
+    {
+        return $this->belongsToMany(Book::class, 'wishlists')->withTimestamps();
+    }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+        public function bookInteractions()
+    {
+        return $this->hasMany(BookInteraction::class);
     }
 }
