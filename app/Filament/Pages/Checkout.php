@@ -75,7 +75,7 @@ class Checkout extends Page implements HasForms
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'total_amount' => $this->getCartTotal(),
-                'status' => 'pending',
+                'status' => 'placed',
                 'shipping_address' => $data['shippingAddress'],
                 'payment_method' => $data['paymentMethod'],
             ]);
@@ -99,7 +99,7 @@ class Checkout extends Page implements HasForms
                 ->success()
                 ->send();
 
-            return redirect()->route('filament.pages.dashboard');
+            return redirect()->route('filament.app.pages.dashboard');
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -109,8 +109,8 @@ class Checkout extends Page implements HasForms
             Notification::make()
                 ->title('Error placing order')
                 ->body('An error occurred while placing your order. Please try again.')
-                ->danger()
-                ->send();
+                ->danger();
+                // ->send();
         }
     }
 

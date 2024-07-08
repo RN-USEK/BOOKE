@@ -9,11 +9,13 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Review;
 use App\Models\Wishlist;
+use App\Models\Order;
 use App\Policies\BookPolicy;
 use App\Policies\UserPolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\ReviewPolicy;
 use App\Policies\WishlistPolicy;
+use App\Policies\OrderPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -28,6 +30,7 @@ class AuthServiceProvider extends ServiceProvider
         Category::class => CategoryPolicy::class,
         Review::class => ReviewPolicy::class,
         Wishlist::class => WishlistPolicy::class,
+        Order::class => OrderPolicy::class,
     ];
 
     /**

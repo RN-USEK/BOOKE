@@ -12,7 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
@@ -74,7 +75,8 @@ class OrderResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                    ->visible(fn (): bool => auth()->user()->hasAnyRole(['admin', 'manager'])),
                 ]),
             ]);
     }
@@ -93,5 +95,41 @@ class OrderResource extends Resource
             'create' => Pages\CreateOrder::route('/create'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (Auth::user()->hasRole('user')) {
+            $query->where('user_id', Auth::id());
+        }
+
+        return $query;
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->hasAnyRole(['admin', 'manager']);
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()->hasAnyRole(['admin', 'manager']);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()->hasAnyRole(['admin', 'manager']);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return true; // All authenticated users can see the orders list
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return Auth::user()->hasAnyRole(['admin', 'manager']) || $record->user_id === Auth::id();
     }
 }
