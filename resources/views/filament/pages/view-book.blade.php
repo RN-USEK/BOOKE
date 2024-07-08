@@ -106,22 +106,49 @@
       No book data available.
     </div>
   @endif
-    <!-- Reviews section -->
-    <div class="mt-8">
-    <h2 class="text-2xl font-bold mb-4">Reviews</h2>
-    @if($this->record->reviews->count() > 0)
-        <p>Average Rating: {{ number_format($this->record->averageRating(), 1) }} / 5</p>
+
+ <!-- Reviews section -->
+    <div class="mt-8 max-w-4xl mx-auto">
+    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">Reviews</h2>
+        
+        @if($this->record->reviews->count() > 0)
+        <div class="flex items-center mb-6">
+            <span class="text-lg font-semibold mr-2">Average Rating:</span>
+            <span class="text-lg font-semibold mr-2">{{ number_format($this->record->averageRating(), 1) }}</span>
+            <span class="flex">
+            @php
+                $averageRating = round($this->record->averageRating());
+            @endphp
+            @for ($i = 1; $i <= 5; $i++)
+                <svg class="h-6 w-6" style="{{ $i <= $averageRating ? 'color: #facc15;' : 'color: #d1d5db;' }}" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+                </svg>
+            @endfor
+            </span>
+        </div>
+
         @foreach($this->record->reviews as $review)
-            <div class="border-b py-2">
-                <p>Rating: {{ $review->rating }} / 5</p>
-                <p>{{ $review->comment }}</p>
-                <p class="text-sm text-gray-500">By {{ $review->user->name }} on {{ $review->created_at->format('M d, Y') }}</p>
+            <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden shadow rounded-lg p-4 mb-4">
+            <div class="flex items-center mb-2">
+                <span class="font-semibold mr-2">Rating:</span>
+                <span class="flex">
+                @for ($i = 1; $i <= 5; $i++)
+                    <svg class="h-5 w-5" style="{{ $i <= $review->rating ? 'color: #facc15;' : 'color: #d1d5db;' }}" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+                    </svg>
+                @endfor
+                </span>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-2">{{ $review->comment }}</p>
+            <p class="text-sm text-gray-500">By {{ $review->user->name }} on {{ $review->created_at->format('M d, Y') }}</p>
             </div>
         @endforeach
-    @else
-        <p>No reviews yet.</p>
-    @endif
-</div>
+        @else
+        <p class="text-gray-500">No reviews yet.</p>
+        @endif
+    </div>
+    </div>
   <div class="mt-4 max-w-2xl mx-auto"> <!-- Center the footer action as well -->
     {{ $this->getFooterActions()[0]->render() }}
   </div>
