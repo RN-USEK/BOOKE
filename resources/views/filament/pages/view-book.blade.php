@@ -106,7 +106,22 @@
       No book data available.
     </div>
   @endif
-
+    <!-- Reviews section -->
+    <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">Reviews</h2>
+    @if($this->record->reviews->count() > 0)
+        <p>Average Rating: {{ number_format($this->record->averageRating(), 1) }} / 5</p>
+        @foreach($this->record->reviews as $review)
+            <div class="border-b py-2">
+                <p>Rating: {{ $review->rating }} / 5</p>
+                <p>{{ $review->comment }}</p>
+                <p class="text-sm text-gray-500">By {{ $review->user->name }} on {{ $review->created_at->format('M d, Y') }}</p>
+            </div>
+        @endforeach
+    @else
+        <p>No reviews yet.</p>
+    @endif
+</div>
   <div class="mt-4 max-w-2xl mx-auto"> <!-- Center the footer action as well -->
     {{ $this->getFooterActions()[0]->render() }}
   </div>

@@ -10,9 +10,14 @@ use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Session;
+use Filament\Forms\Concerns\InteractsWithForms;
 
 class ViewBook extends Page
 {
+    use InteractsWithForms;
+    
+    public $rating;
+    public $comment;
     protected static string $view = 'filament.pages.view-book';
     
     protected static bool $shouldRegisterNavigation = false;
@@ -147,4 +152,4 @@ class ViewBook extends Page
     {
         return redirect()->route('filament.app.pages.checkout');
     }
-}
+   }

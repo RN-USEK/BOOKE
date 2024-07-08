@@ -4,11 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReviewResource\Pages;
 use App\Models\Review;
+use App\Models\Book;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewResource extends Resource
 {
@@ -20,12 +23,21 @@ class ReviewResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required(),
                 Forms\Components\Select::make('book_id')
-                    ->relationship('book', 'title')
-                    ->required(),
+                    ->label('Book')
+                    ->options(function () {
+                        $user = Auth::user();
+                        $purchasedBookIds = $user->purchasedBooks()->pluck('id')->toArray();
+                        $reviewedBookIds = $user->reviews()->pluck('book_id')->toArray();
+                        $availableBookIds = array_diff($purchasedBookIds, $reviewedBookIds);
+                        
+                        return Book::whereIn('id', $availableBookIds)
+                            ->pluck('title', 'id')
+                            ->toArray();
+                    })
+                    ->required()
+                    ->searchable()
+                    ->preload(),
                 Forms\Components\Select::make('rating')
                     ->options([
                         1 => '1 Star',
@@ -44,7 +56,6 @@ class ReviewResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name'),
                 Tables\Columns\TextColumn::make('book.title'),
                 Tables\Columns\TextColumn::make('rating'),
                 Tables\Columns\TextColumn::make('comment')->limit(50),
@@ -79,5 +90,13 @@ class ReviewResource extends Resource
             'create' => Pages\CreateReview::route('/create'),
             'edit' => Pages\EditReview::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->when(Auth::user()->hasRole('user'), function ($query) {
+                $query->where('user_id', Auth::id());
+            });
     }
 }
