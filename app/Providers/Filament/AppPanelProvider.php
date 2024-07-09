@@ -19,6 +19,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Pages\ViewBook;
 use App\Filament\Pages\Checkout;
+use App\Filament\Pages\Auth\Register;
+
 class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -27,6 +29,11 @@ class AppPanelProvider extends PanelProvider
             ->id('app')
             ->path('app')
             ->login()
+            ->registration(Register::class)
+            ->passwordReset()
+            ->emailverification()
+            ->profile()
+
             ->colors([
                 'primary' => Color::Blue,
                 'gray' => Color::Blue, 
