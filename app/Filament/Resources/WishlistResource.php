@@ -58,11 +58,14 @@ class WishlistResource extends Resource
                 ->visible(fn () => auth()->user()->hasAnyRole(['admin', 'manager']))
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->url(fn (Wishlist $record): string => route('filament.app.pages.view-book', ['recordId' => $record->book_id])), 
                 Tables\Actions\EditAction::make()
                     ->visible(fn ($record) => Auth::user()->hasAnyRole(['admin']) || (Auth::user()->hasRole('user') && $record->user_id === Auth::id())),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn ($record) => Auth::user()->hasAnyRole(['admin']) || $record->user_id === Auth::id()),
-            ])
+            
+                    ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
