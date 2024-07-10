@@ -220,20 +220,18 @@ class Dashboard extends Page implements HasForms
     private function generateRecommendationQuery()
     {
         $user = Auth::user();
-        $topInteractions = BookInteraction::where('user_id', $user->id)
+        $topInteraction = BookInteraction::where('user_id', $user->id)
             ->orderBy('score', 'desc')
-            ->take(5)
-            ->get();
+            ->first();
 
-        $queryParts = [];
-        foreach ($topInteractions as $interaction) {
-            $book = Book::find($interaction->book_id);
-            if ($book) {
-                $queryParts[] = $book->title;
+        if ($topInteraction) {
+            $book = Book::find($topInteraction->book_id);
+            if ($book && $book->category) {
+                return $book->category->name;
             }
         }
 
-        return implode(' ', $queryParts);
+        return 'popular books'; // Default query if no interactions or category found
     }
 
     public function fetchRecommendations()
@@ -241,11 +239,11 @@ class Dashboard extends Page implements HasForms
         $googleBooksService = app(GoogleBooksService::class);
         $query = $this->generateRecommendationQuery();
 
-        if (empty($query)) {
-            // If the user has no interactions yet, use a default query
-            $query = 'popular books';
-        }
+        Log::info('Fetching recommendations with query: ' . $query);
 
         $this->recommendedBooks = $googleBooksService->searchBooks($query);
+
+        // Limit to 4 recommended books
+        $this->recommendedBooks = array_slice($this->recommendedBooks, 0, 4);
     }
 }

@@ -18,11 +18,15 @@ class GoogleBooksService
     }
 
     public function searchBooks(string $query)
-    {       $que = trim($query);
+    {
+        $que = trim($query);
         if (empty($que)) {
             Log::warning('Empty query sent to Google Books API');
             return [];
         }
+
+        $startIndex = $this->getRandomStartIndex();
+
         $response = Http::get($this->baseUrl, [
             'q' => $query,
             'key' => $this->apiKey,
@@ -30,6 +34,7 @@ class GoogleBooksService
             'printType' => 'books',
             'orderBy' => 'newest',
             'country' => 'US',
+            'startIndex' => $startIndex,
         ]);
 
         Log::info('Google Books API Response:', ['response' => $response->json()]);
@@ -39,6 +44,12 @@ class GoogleBooksService
         }
 
         return [];
+    }
+
+    protected function getRandomStartIndex()
+    {
+        $multiplesOfTen = range(0, 90, 10);
+        return $multiplesOfTen[array_rand($multiplesOfTen)];
     }
 
     protected function processAndSaveBooks($items)
