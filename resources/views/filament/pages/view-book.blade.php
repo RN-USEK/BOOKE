@@ -74,9 +74,9 @@
                   <h3 class="font-semibold">{{ $item['title'] }}</h3>
                   <p>Price: ${{ number_format($item['price'], 2) }}</p>
                   <div class="flex items-center">
-                    <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] - 1 }})" class="px-2 py-1 bg-gray-200 rounded" onclick="event.stopPropagation();">-</button>
-                    <span class="mx-2">{{ $item['quantity'] }}</span>
-                    <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] + 1 }})" class="px-2 py-1 bg-gray-200 rounded" onclick="event.stopPropagation();">+</button>
+                    <!-- <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] - 1 }})" class="px-2 py-1 bg-gray-200 rounded" onclick="event.stopPropagation();">-</button> -->
+                    <!-- <span class="mx-2">{{ $item['quantity'] }}</span> -->
+                    <!-- <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] + 1 }})" class="px-2 py-1 bg-gray-200 rounded" onclick="event.stopPropagation();">+</button> -->
                   </div>
                 </div>
                 <button wire:click="removeFromCart({{ $bookId }})" class="text-red-500" onclick="event.stopPropagation();">Remove</button>

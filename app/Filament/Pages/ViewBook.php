@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Session;
 use Filament\Forms\Concerns\InteractsWithForms;
-
+use App\Services\BookInteractionService;
 class ViewBook extends Page
 {
     use InteractsWithForms;
@@ -31,6 +31,8 @@ class ViewBook extends Page
         if ($recordId) {
             $this->record = Book::findOrFail($recordId);
             Log::info('Record: ' . json_encode($this->record));
+            app(BookInteractionService::class)->recordInteraction($this->record->id, 'view');
+
         }
     }
     
@@ -79,6 +81,8 @@ class ViewBook extends Page
                 'user_id' => $user->id,
                 'book_id' => $this->record->id,
             ]);
+            app(BookInteractionService::class)->recordInteraction($this->record->id, 'wishlist');
+
         }
     }
 

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Services\BookInteractionService;
 class Checkout extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -87,6 +87,8 @@ class Checkout extends Page implements HasForms
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                 ]);
+                app(BookInteractionService::class)->recordInteraction($bookId, 'purchase');
+
             }
 
             DB::commit();

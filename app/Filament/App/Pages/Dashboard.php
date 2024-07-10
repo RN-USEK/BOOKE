@@ -3,6 +3,7 @@
 namespace App\Filament\App\Pages;
 
 use App\Models\Book;
+use App\Models\BookInteraction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -31,10 +32,12 @@ class Dashboard extends Page implements HasForms
     public $searchQuery = '';
     public $imageUpload;
     public $searchResults = null;
+    public $recommendedBooks = [];
 
     public function mount(): void
     {
         $this->form->fill();
+        $this->fetchRecommendations();
     }
 
     public function form(Form $form): Form
@@ -131,9 +134,13 @@ class Dashboard extends Page implements HasForms
                 ->send();
         }
     }
+    // public function getBooks()
+    // {
+    //     return $this->searchResults ?? Book::with('category')->latest()->take(12)->get();
+    // }
     public function getBooks()
     {
-        return $this->searchResults ?? Book::with('category')->latest()->take(12)->get();
+        return Book::with('category')->latest()->paginate(12);
     }
 
     public function toggleWishlist($bookId)
@@ -210,4 +217,35 @@ class Dashboard extends Page implements HasForms
         return CartService::getTotal();
     }
 
+    private function generateRecommendationQuery()
+    {
+        $user = Auth::user();
+        $topInteractions = BookInteraction::where('user_id', $user->id)
+            ->orderBy('score', 'desc')
+            ->take(5)
+            ->get();
+
+        $queryParts = [];
+        foreach ($topInteractions as $interaction) {
+            $book = Book::find($interaction->book_id);
+            if ($book) {
+                $queryParts[] = $book->title;
+            }
+        }
+
+        return implode(' ', $queryParts);
+    }
+
+    public function fetchRecommendations()
+    {
+        $googleBooksService = app(GoogleBooksService::class);
+        $query = $this->generateRecommendationQuery();
+
+        if (empty($query)) {
+            // If the user has no interactions yet, use a default query
+            $query = 'popular books';
+        }
+
+        $this->recommendedBooks = $googleBooksService->searchBooks($query);
+    }
 }

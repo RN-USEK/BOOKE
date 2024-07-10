@@ -12,7 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-
+use App\Services\BookInteractionService;
 class ReviewResource extends Resource
 {
     protected static ?string $model = Review::class;
@@ -46,7 +46,12 @@ class ReviewResource extends Resource
                         4 => '4 Stars',
                         5 => '5 Stars',
                     ])
-                    ->required(),
+                    ->required()
+                    ->afterStateUpdated(function ($state, $set, $get) {
+                        if ($state && $get('book_id')) {
+                            app(BookInteractionService::class)->recordReview($get('book_id'), $state);
+                        }
+                    }),
                 Forms\Components\Textarea::make('comment')
                     ->maxLength(65535),
             ]);
