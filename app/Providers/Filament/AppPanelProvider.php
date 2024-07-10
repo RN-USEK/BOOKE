@@ -41,7 +41,7 @@ class AppPanelProvider extends PanelProvider
                 'gray' => Color::Blue, 
             ])
             ->brandLogo(asset('/booke.png'))
-            ->favicon(asset('/logo.svg'))
+            ->favicon(asset('/logo.png'))
             ->brandLogoHeight('4rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
