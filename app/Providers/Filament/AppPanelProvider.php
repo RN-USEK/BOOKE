@@ -33,6 +33,8 @@ class AppPanelProvider extends PanelProvider
             ->passwordReset()
             ->emailverification()
             ->profile()
+            ->default()
+
 
             ->colors([
                 'primary' => Color::Blue,
@@ -65,6 +67,8 @@ class AppPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \App\Http\Middleware\RedirectToAppLogin::class,
+
             ])
             ->authMiddleware([
                 Authenticate::class,

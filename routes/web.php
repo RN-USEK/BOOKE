@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Filament\Pages\ViewBook;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,3 +20,11 @@ use App\Filament\Pages\ViewBook;
 // Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
 // Route::get('/app/books/{book}', ViewBook::class)->name('filament.app.books.view');
+
+Route::get('/', function () {
+    return redirect('/app/login');
+});
+
+Route::get('/login', function () {
+    return redirect('/app/login');
+});
