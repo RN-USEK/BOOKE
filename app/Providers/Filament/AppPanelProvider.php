@@ -20,7 +20,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Pages\ViewBook;
 use App\Filament\Pages\Checkout;
 use App\Filament\Pages\Auth\Register;
-
+use App\Services\BookInteractionService;
 class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel

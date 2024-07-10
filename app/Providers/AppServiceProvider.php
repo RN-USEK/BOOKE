@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Services\CartService;
+use App\Services\BookInteractionService;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -13,6 +14,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(CartService::class, function ($app) {
             return new CartService();
+        });
+        $this->app->singleton(BookInteractionService::class, function ($app) {
+            return new BookInteractionService();
         });
     }
 

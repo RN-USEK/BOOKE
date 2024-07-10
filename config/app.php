@@ -171,6 +171,7 @@ return [
         App\Providers\Filament\AppPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
         BezhanSalleh\FilamentShield\FilamentShieldServiceProvider::class,
+        App\Providers\BookInteractionServiceProvider::class,
     ])->toArray(),
 
     /*

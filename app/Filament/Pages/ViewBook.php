@@ -31,7 +31,9 @@ class ViewBook extends Page
         if ($recordId) {
             $this->record = Book::findOrFail($recordId);
             Log::info('Record: ' . json_encode($this->record));
-            app(BookInteractionService::class)->recordInteraction($this->record->id, 'view');
+            $bookInteractionService = app()->make(BookInteractionService::class);
+
+            $bookInteractionService->recordInteraction($this->record->id, 'view');
 
         }
     }
