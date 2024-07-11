@@ -28,3 +28,6 @@ Route::get('/', function () {
 Route::get('/login', function () {
     return redirect('/app/login');
 });
+// routes/web.php
+
+Route::get('/filament/pages/dashboard', ViewBook::class)->name('filament.app.pages.dashboard');
