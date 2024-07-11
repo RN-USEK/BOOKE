@@ -19,25 +19,42 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wishlist;
 use App\Services\CartService;
+use App\Models\Category;
 class Dashboard extends Page implements HasForms
 {
     use InteractsWithForms;
     use WithFileUploads;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-home';
+    protected static ?string $navigationLabel = 'Home';
+    protected static ?string $slug = 'home'; // Add a unique slug
     protected static string $view = 'filament.app.pages.dashboard';
-    protected static ?string $title = 'Dashboard';
     protected static ?int $navigationSort = -2;
+    protected static ?string $title = 'Home';
 
     public $searchQuery = '';
     public $imageUpload;
     public $searchResults = null;
     public $recommendedBooks = [];
+    public $categories = [];
+
+    // public static function getNavigationItems(): array
+    // {
+    //     return [
+    //         NavigationItem::make('Home')
+    //             ->url(fn () => Dashboard::getUrl())
+    //             ->icon('heroicon-o-home')
+    //             ->activeIcon('heroicon-s-home')
+    //             ->sort(-2),
+    //     ];
+    // }
 
     public function mount(): void
     {
         $this->form->fill();
         $this->fetchRecommendations();
+        $this->loadCategories(); // Load categories
+
     }
 
     public function form(Form $form): Form
@@ -245,5 +262,9 @@ class Dashboard extends Page implements HasForms
 
         // Limit to 4 recommended books
         $this->recommendedBooks = array_slice($this->recommendedBooks, 0, 4);
+    }
+    private function loadCategories()
+    {
+        $this->categories = Category::all();
     }
 }

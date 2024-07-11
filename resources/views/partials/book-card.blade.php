@@ -1,9 +1,9 @@
 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
     <div class="p-4">
         @if($book->cover_image)
-            <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-48 object-cover mb-4">
+            <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full @if($height == 'short') h-32 @else h-48 @endif object-cover mb-4">
         @else
-            <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center mb-4">
+            <div class="w-full @if($height == 'short') h-32 @else h-48 @endif bg-gray-200 dark:bg-gray-700 flex items-center justify-center mb-4">
                 <span class="text-gray-500 dark:text-gray-400">No Image</span>
             </div>
         @endif
