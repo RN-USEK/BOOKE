@@ -20,6 +20,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Pages\ViewBook;
 use App\Filament\Pages\Checkout;
 use App\Filament\Pages\Auth\Register;
+use App\Filament\Pages\CategoryBooks;
 use App\Services\BookInteractionService;
 class AppPanelProvider extends PanelProvider
 {
@@ -51,7 +52,9 @@ class AppPanelProvider extends PanelProvider
                 // Pages\Dashboard::class,
                 ViewBook::class,
                 Checkout::class,
+                CategoryBooks::class,
             ])
+
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->widgets([
                 // Widgets\AccountWidget::class,

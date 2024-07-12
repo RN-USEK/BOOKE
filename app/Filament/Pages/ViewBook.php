@@ -59,13 +59,15 @@ class ViewBook extends Page
                 }),
         ];
     }
-
+    
     protected function getFooterActions(): array
     {
         return [
             Action::make('go back')
                 ->icon('heroicon-o-arrow-left')
-                ->url(fn (): string => route('filament.app.pages.dashboard')),
+                ->action(function () {
+                    return $this->back();
+                }),
         ];
     }
 

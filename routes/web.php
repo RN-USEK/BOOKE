@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Filament\Pages\ViewBook;
-
+use App\Filament\Pages\CategoryBooks;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,6 +28,7 @@ Route::get('/', function () {
 Route::get('/login', function () {
     return redirect('/app/login');
 });
-// routes/web.php
+// // routes/web.php
 
 Route::get('/filament/pages/dashboard', ViewBook::class)->name('filament.app.pages.dashboard');
+Route::get('app/category/{category}', CategoryBooks::class)->name('category-books');

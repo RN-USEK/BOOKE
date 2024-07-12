@@ -112,7 +112,7 @@
     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-6">
         <h2 class="text-2xl font-bold mb-4">Reviews</h2>
         
-        @if($this->record->reviews->count() > 0)
+        @if($this->record && $this->record->reviews->count() > 0)
         <div class="flex items-center mb-6">
             <span class="text-lg font-semibold mr-2">Average Rating:</span>
             <span class="text-lg font-semibold mr-2">{{ number_format($this->record->averageRating(), 1) }}</span>

@@ -37,6 +37,7 @@ class Dashboard extends Page implements HasForms
     public $searchResults = null;
     public $recommendedBooks = [];
     public $categories = [];
+    public $popularBooks = [];
 
     // public static function getNavigationItems(): array
     // {
@@ -53,7 +54,8 @@ class Dashboard extends Page implements HasForms
     {
         $this->form->fill();
         $this->fetchRecommendations();
-        $this->loadCategories(); // Load categories
+        $this->fetchCategories();
+        $this->fetchPopularBooks();
 
     }
 
@@ -151,10 +153,7 @@ class Dashboard extends Page implements HasForms
                 ->send();
         }
     }
-    // public function getBooks()
-    // {
-    //     return $this->searchResults ?? Book::with('category')->latest()->take(12)->get();
-    // }
+
     public function getBooks()
     {
         return Book::with('category')->latest()->paginate(12);
@@ -263,7 +262,14 @@ class Dashboard extends Page implements HasForms
         // Limit to 4 recommended books
         $this->recommendedBooks = array_slice($this->recommendedBooks, 0, 4);
     }
-    private function loadCategories()
+    public function fetchPopularBooks()
+    {
+        $googleBooksService = app(GoogleBooksService::class);
+        $this->popularBooks = $googleBooksService->searchBooks('popular books');
+        $this->popularBooks = array_slice($this->popularBooks, 0, 5);
+    }
+
+    public function fetchCategories()
     {
         $this->categories = Category::all();
     }
