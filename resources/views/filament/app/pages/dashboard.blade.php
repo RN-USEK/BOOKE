@@ -108,6 +108,7 @@
             {{ $this->getBooks()->links() }}
         </div>
     </div>
+    
     <!-- Floating Cart Icon -->
 <div class="fixed bottom-4 right-4 z-50">
     <button onclick="toggleCartVisibility(event)" class="bg-white dark:bg-gray-800 shadow rounded-full p-3 focus:outline-none">
