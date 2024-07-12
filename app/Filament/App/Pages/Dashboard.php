@@ -301,5 +301,20 @@ class Dashboard extends Page implements HasForms
     {
         return redirect()->route('filament.app.pages.checkout');
     }
+    public function getImageQueryWords()
+    {
+        $imageQueryWords = '';
+        if (!empty($this->imageUpload)) {
+            $googleVisionService = app(GoogleVisionService::class);
+            foreach ($this->imageUpload as $key => $uploadedFile) {
+                if ($uploadedFile instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                    $fullPath = $uploadedFile->getRealPath();
+                    $detectedObjects = $googleVisionService->detectObjects($fullPath);
+                    $imageQueryWords .= implode(', ', $detectedObjects) . ' ';
+                }
+            }
+        }
+        return trim($imageQueryWords);
+    }
 
 }

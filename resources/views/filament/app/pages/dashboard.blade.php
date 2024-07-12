@@ -83,6 +83,11 @@
 
         @if($this->searchResults !== null)
             <h2 class="text-2xl font-bold mb-4">Your Results</h2>
+            @if(!empty($this->searchQuery) && empty($this->imageUpload))
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Searched for: "{{ $this->searchQuery }}"</p>
+            @elseif(!empty($this->imageUpload))
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Keywords: {{ $this->getImageQueryWords() }}</p>
+            @endif
             <div class="book-grid mb-8">
                 @foreach($this->searchResults as $book)
                     @include('partials.book-card', ['book' => $book])
@@ -108,7 +113,7 @@
             {{ $this->getBooks()->links() }}
         </div>
     </div>
-    
+
     <!-- Floating Cart Icon -->
 <div class="fixed bottom-4 right-4 z-50">
     <button onclick="toggleCartVisibility(event)" class="bg-white dark:bg-gray-800 shadow rounded-full p-3 focus:outline-none">
