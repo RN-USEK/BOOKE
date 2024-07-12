@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Book;
+use App\Models\Review;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Log;
@@ -19,8 +20,8 @@ class ViewBook extends Page
 {
     use InteractsWithForms;
     
-    public $rating = 5;
-    public $comment = '';
+    public $rating;
+    public $comment;
     public $userReview;
 
     protected static string $view = 'filament.pages.view-book';
@@ -40,6 +41,7 @@ class ViewBook extends Page
 
             $bookInteractionService->recordInteraction($this->record->id, 'view');
 
+            $this->loadUserReview();
         }
     }
     
@@ -155,6 +157,21 @@ class ViewBook extends Page
     }
 
     ////////////////////////review stuff
+    public function loadUserReview()
+    {
+        $this->userReview = $this->getUserReview();
+        if ($this->userReview) {
+            $this->rating = $this->userReview->rating;
+            $this->comment = $this->userReview->comment;
+            Log::info('Loaded user review', [
+                'rating' => $this->rating,
+                'comment' => $this->comment,
+            ]);
+        } else {
+            Log::info('No existing user review found');
+        }
+    }
+
     public function isBookPurchased()
     {
         $user = Auth::user();
@@ -163,6 +180,7 @@ class ViewBook extends Page
             return $book->id == $this->record->id;
         });
     }
+
     public function hasUserReviewed()
     {
         if ($this->isBookPurchased()) {
@@ -184,51 +202,94 @@ class ViewBook extends Page
     public function setRating($rating)
     {
         if ($this->isBookPurchased()) {
+            Log::info('setRating() called with rating: ' . $rating);
             $this->rating = $rating;
+            
+            if ($this->userReview) {
+                $updated = $this->userReview->update(['rating' => $this->rating]);
+                Log::info('Rating update result', ['updated' => $updated, 'new_rating' => $this->rating]);
+            }
+            
+            Log::info('Rating set', ['rating' => $this->rating]);
         } else {
             $this->rating = null;
         }
     }
 
-public function submitReview()
-{
-    $this->validate([
-        'rating' => 'required|integer|between:1,5',
-        'comment' => 'nullable|string|max:65535',
-    ]);
+    public function submitReview()
+    {
+        $this->validate([
+            'rating' => 'required|integer|between:1,5',
+            'comment' => 'nullable|string|max:65535',
+        ]);
 
-    $review = Review::create([
-        'user_id' => Auth::id(),
-        'book_id' => $this->record->id,
-        'rating' => $this->rating,
-        'comment' => $this->comment,
-    ]);
+        Log::info('Submitting new review', [
+            'rating' => $this->rating,
+            'comment' => $this->comment,
+        ]);
 
-    $this->userReview = $review;
-    $this->comment = '';
-    $this->rating = 5;
+        $review = Review::create([
+            'user_id' => Auth::id(),
+            'book_id' => $this->record->id,
+            'rating' => $this->rating,
+            'comment' => $this->comment,
+        ]);
 
-    Notification::make()
-    ->title('Review Submitted')
-    ->success()
-    ->send();
-}
+        $this->userReview = $review;
+        $this->loadUserReview();
 
-public function updateReview()
-{
-    $this->validate([
-        'rating' => 'required|integer|between:1,5',
-        'comment' => 'nullable|string|max:65535',
-    ]);
+        Notification::make()
+            ->title('Review Submitted')
+            ->success()
+            ->send();
+    }
 
-    $this->userReview->update([
-        'rating' => $this->rating,
-        'comment' => $this->comment,
-    ]);
-
-    Notification::make()
-    ->title('Review Updated')
-    ->success()
-    ->send();
-   }
+    public function updateReview()
+    {
+        $this->validate([
+            'rating' => 'required|integer|between:1,5',
+            'comment' => 'nullable|string|max:65535',
+        ]);
+    
+        Log::info('Updating existing review', [
+            'current_rating' => $this->rating,
+            'new_rating' => $this->rating,
+            'comment' => $this->comment,
+            'review_id' => $this->userReview->id,
+        ]);
+    
+        try {
+            $updated = $this->userReview->update([
+                'rating' => $this->rating,
+                'comment' => $this->comment,
+            ]);
+    
+            Log::info('Review update result', [
+                'updated' => $updated,
+                'new_rating' => $this->userReview->fresh()->rating,
+                'new_comment' => $this->userReview->fresh()->comment,
+            ]);
+    
+            if ($updated) {
+                $this->loadUserReview();
+                Notification::make()
+                    ->title('Review Updated')
+                    ->success()
+                    ->send();
+            } else {
+                throw new \Exception('Update operation returned false');
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to update review', [
+                'review_id' => $this->userReview->id,
+                'rating' => $this->rating,
+                'comment' => $this->comment,
+                'error' => $e->getMessage(),
+            ]);
+            Notification::make()
+                ->title('Failed to update review')
+                ->danger()
+                ->send();
+        }
+    }
 }
