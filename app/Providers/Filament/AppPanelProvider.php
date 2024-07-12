@@ -35,8 +35,8 @@ class AppPanelProvider extends PanelProvider
             ->emailverification()
             ->profile()
             ->default()
-
-
+            ->sidebarWidth('12rem')
+            
             ->colors([
                 'primary' => Color::Blue,
                 'gray' => Color::Blue, 

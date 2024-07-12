@@ -1,4 +1,5 @@
-<x-filament-panels::page class="bg-gray-100 dark:bg-gray-900">
+
+<x-filament-panels::page class="bg-white">
     <style>
         .container {
             max-width: 1200px;
@@ -6,6 +7,12 @@
             margin-right: auto;
             padding-left: 1rem;
             padding-right: 1rem;
+        }
+        .fi-page {
+            background-color: white; /* Or your desired color */
+        }
+        .fi-sidebar {
+            background-color: peachpuff;
         }
         .book-grid {
             display: grid;

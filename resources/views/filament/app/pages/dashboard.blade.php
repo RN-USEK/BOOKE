@@ -1,4 +1,4 @@
-<x-filament-panels::page class="bg-gray-100 dark:bg-gray-900">
+<x-filament-panels::page>
     <style>
         .container {
             max-width: 1200px;
@@ -12,6 +12,12 @@
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 1rem;
         }
+        /* .fi-page {
+            background-color: white;
+        } */
+        /* .fi-sidebar {
+            background-color: peachpuff;
+        } */
         @media (min-width: 640px) {
             .book-grid {
                 grid-template-columns: repeat(3, minmax(160px, 1fr));
