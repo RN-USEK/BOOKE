@@ -1,14 +1,14 @@
-<div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+<div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg" style="max-width: 180px;">
     <div class="p-3">
         @if($book->cover_image)
-            <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-40 object-cover mb-3">
+            <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-32 object-cover mb-3">
         @else
-            <div class="w-full h-40 bg-gray-200 dark:bg-gray-700 flex items-center justify-center mb-3">
-                <span class="text-gray-500 dark:text-gray-400">No Image</span>
+            <div class="w-full h-32 bg-gray-200 dark:bg-gray-700 flex items-center justify-center mb-3">
+                <span class="text-gray-500 dark:text-gray-400 text-xs">No Image</span>
             </div>
         @endif
-        <h3 class="text-md font-semibold text-gray-900 dark:text-white truncate">{{ $book->title }}</h3>
-        <p class="text-xs text-gray-600 dark:text-gray-300">{{ $book->author }}</p>
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $book->title }}</h3>
+        <p class="text-xs text-gray-600 dark:text-gray-300 truncate">{{ $book->author }}</p>
         <p class="text-sm font-bold text-gray-900 dark:text-white mt-1">${{ number_format($book->price, 2) }}</p>
     </div>
     <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700 flex justify-between">
