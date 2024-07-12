@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Wishlist;
 use App\Services\CartService;
 use App\Models\Category;
+
+use Illuminate\Support\Facades\Session;
 class Dashboard extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -39,16 +41,6 @@ class Dashboard extends Page implements HasForms
     public $categories = [];
     public $popularBooks = [];
 
-    // public static function getNavigationItems(): array
-    // {
-    //     return [
-    //         NavigationItem::make('Home')
-    //             ->url(fn () => Dashboard::getUrl())
-    //             ->icon('heroicon-o-home')
-    //             ->activeIcon('heroicon-s-home')
-    //             ->sort(-2),
-    //     ];
-    // }
 
     public function mount(): void
     {
@@ -213,26 +205,6 @@ class Dashboard extends Page implements HasForms
             ->send();
     }
 
-    public function updateCartQuantity($bookId, $quantity)
-    {
-        CartService::update($bookId, $quantity);
-        
-        Notification::make()
-            ->title('Cart Updated')
-            ->success()
-            ->send();
-    }
-
-    public function getCartContent()
-    {
-        return CartService::getContent();
-    }
-
-    public function getCartTotal()
-    {
-        return CartService::getTotal();
-    }
-
     private function generateRecommendationQuery()
     {
         $user = Auth::user();
@@ -273,4 +245,61 @@ class Dashboard extends Page implements HasForms
     {
         $this->categories = Category::all();
     }
+    ////////////// cart stuff
+
+    public function toggleCart()
+    {
+        $cart = Session::get('cart', []);
+
+        if (isset($cart[$this->record->id])) {
+            unset($cart[$this->record->id]);
+        } else {
+            $cart[$this->record->id] = [
+                'title' => $this->record->title,
+                'price' => $this->record->price,
+                'quantity' => 1,
+            ];
+        }
+
+        Session::put('cart', $cart);
+        $this->dispatch('cart-updated');
+    }
+
+    public function isInCart()
+    {
+        $cart = Session::get('cart', []);
+        return isset($cart[$this->record->id]);
+    }
+
+    public function getCartContent()
+    {
+        return Session::get('cart', []);
+    }
+
+    public function getCartTotal()
+    {
+        $cart = Session::get('cart', []);
+        return array_sum(array_map(function($item) {
+            return $item['price'] * $item['quantity'];
+        }, $cart));
+    }
+
+    public function updateCartQuantity($bookId, $quantity)
+    {
+        $cart = Session::get('cart', []);
+        if (isset($cart[$bookId])) {
+            if ($quantity > 0) {
+                $cart[$bookId]['quantity'] = $quantity;
+            } else {
+                unset($cart[$bookId]);
+            }
+            Session::put('cart', $cart);
+        }
+    }
+
+    public function proceedToCheckout()
+    {
+        return redirect()->route('filament.app.pages.checkout');
+    }
+
 }
