@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Wishlist;
 use App\Services\CartService;
 use App\Models\Category;
-
+use App\Services\WishlistService;
 use Illuminate\Support\Facades\Session;
 class Dashboard extends Page implements HasForms
 {
@@ -145,12 +145,12 @@ class Dashboard extends Page implements HasForms
                 ->send();
         }
     }
-
     public function getBooks()
     {
-        return Book::with('category')->latest()->paginate(12);
+        $user = Auth::user();
+        $purchasedBookIds = $user->purchasedBooks()->pluck('id')->toArray();
+        return Book::whereIn('id', $purchasedBookIds)->latest()->paginate(12);
     }
-
     public function toggleWishlist($bookId)
     {
         $user = Auth::user();
@@ -179,9 +179,12 @@ class Dashboard extends Page implements HasForms
     public function isInWishlist($bookId)
     {
         $user = Auth::user();
-        return Wishlist::where('user_id', $user->id)
-            ->where('book_id', $bookId)
-            ->exists();
+        if ($user) {
+            return Wishlist::where('user_id', $user->id)
+                ->where('book_id', $bookId)
+                ->exists();
+        }
+        return false;
     }
 
     public function addToCart($bookId)

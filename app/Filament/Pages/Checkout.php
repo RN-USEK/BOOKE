@@ -101,7 +101,7 @@ class Checkout extends Page implements HasForms
                 ->success()
                 ->send();
 
-            return redirect()->route('filament.app.pages.dashboard');
+            return redirect()->route('filament.app.pages.dashboard.index');
 
         } catch (\Exception $e) {
             DB::rollback();

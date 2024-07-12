@@ -12,12 +12,17 @@ use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Session;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Services\BookInteractionService;
+use App\Services\WishlistService;
+use Filament\Notifications\Notification;
+
 class ViewBook extends Page
 {
     use InteractsWithForms;
     
-    public $rating;
-    public $comment;
+    public $rating = 5;
+    public $comment = '';
+    public $userReview;
+
     protected static string $view = 'filament.pages.view-book';
     
     protected static bool $shouldRegisterNavigation = false;
@@ -42,9 +47,9 @@ class ViewBook extends Page
     {
         return [
             Action::make('favorite')
-                ->icon(fn () => $this->isInWishlist() ? 'heroicon-s-heart' : 'heroicon-o-heart')
-                ->color(fn () => $this->isInWishlist() ? Color::Red : Color::Gray)
-                ->label(fn () => $this->isInWishlist() ? 'Remove from Wishlist' : 'Add to Wishlist')
+                ->icon(fn () => $this->isInViewBookWishList() ? 'heroicon-s-heart' : 'heroicon-o-heart')
+                ->color(fn () => $this->isInViewBookWishList() ? Color::Red : Color::Gray)
+                ->label(fn () => $this->isInViewBookWishList() ? 'Remove from Wishlist' : 'Add to Wishlist')
                 ->action(function () {
                     $this->toggleWishlist();
                     return '';
@@ -71,31 +76,17 @@ class ViewBook extends Page
         ];
     }
 
+    public function isInViewBookWishlist()
+    {
+        if ($this->record) {
+            return WishlistService::isInWishlist($this->record->id);
+        }
+        return false;
+        }
+
     public function toggleWishlist()
     {
-        $user = Auth::user();
-        $wishlistItem = Wishlist::where('user_id', $user->id)
-            ->where('book_id', $this->record->id)
-            ->first();
-
-        if ($wishlistItem) {
-            $wishlistItem->delete();
-        } else {
-            Wishlist::create([
-                'user_id' => $user->id,
-                'book_id' => $this->record->id,
-            ]);
-            app(BookInteractionService::class)->recordInteraction($this->record->id, 'wishlist');
-
-        }
-    }
-
-    public function isInWishlist()
-    {
-        $user = Auth::user();
-        return Wishlist::where('user_id', $user->id)
-            ->where('book_id', $this->record->id)
-            ->exists();
+        WishlistService::toggleWishlist($this->record->id);
     }
 
     public function toggleCart()
@@ -115,11 +106,13 @@ class ViewBook extends Page
         Session::put('cart', $cart);
         $this->dispatch('cart-updated');
     }
-
     public function isInCart()
     {
-        $cart = Session::get('cart', []);
-        return isset($cart[$this->record->id]);
+        if ($this->record) {
+            $cart = Session::get('cart', []);
+            return isset($cart[$this->record->id]);
+        }
+        return false;
     }
 
     public function getCartContent()
@@ -160,4 +153,82 @@ class ViewBook extends Page
     {
         return redirect()->route('filament.app.pages.checkout');
     }
+
+    ////////////////////////review stuff
+    public function isBookPurchased()
+    {
+        $user = Auth::user();
+        $purchasedBooks = $user->purchasedBooks();
+        return $purchasedBooks->contains(function ($book) {
+            return $book->id == $this->record->id;
+        });
+    }
+    public function hasUserReviewed()
+    {
+        if ($this->isBookPurchased()) {
+            $user = Auth::user();
+            return $this->record->reviews()->where('user_id', $user->id)->count() > 0;
+        }
+        return false;
+    }
+    
+    public function getUserReview()
+    {
+        if ($this->isBookPurchased()) {
+            $user = Auth::user();
+            return $this->record->reviews()->where('user_id', $user->id)->first();
+        }
+        return null;
+    }
+    
+    public function setRating($rating)
+    {
+        if ($this->isBookPurchased()) {
+            $this->rating = $rating;
+        } else {
+            $this->rating = null;
+        }
+    }
+
+public function submitReview()
+{
+    $this->validate([
+        'rating' => 'required|integer|between:1,5',
+        'comment' => 'nullable|string|max:65535',
+    ]);
+
+    $review = Review::create([
+        'user_id' => Auth::id(),
+        'book_id' => $this->record->id,
+        'rating' => $this->rating,
+        'comment' => $this->comment,
+    ]);
+
+    $this->userReview = $review;
+    $this->comment = '';
+    $this->rating = 5;
+
+    Notification::make()
+    ->title('Review Submitted')
+    ->success()
+    ->send();
+}
+
+public function updateReview()
+{
+    $this->validate([
+        'rating' => 'required|integer|between:1,5',
+        'comment' => 'nullable|string|max:65535',
+    ]);
+
+    $this->userReview->update([
+        'rating' => $this->rating,
+        'comment' => $this->comment,
+    ]);
+
+    Notification::make()
+    ->title('Review Updated')
+    ->success()
+    ->send();
    }
+}

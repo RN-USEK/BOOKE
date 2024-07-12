@@ -38,7 +38,7 @@
               @endforeach
             </div>
             <div class="flex space-x-2">
-              <button wire:click="toggleWishlist" class="{{ $this->isInWishlist() ? 'text-danger-600' : 'text-gray-400' }} hover:text-danger-900 dark:hover:text-danger-400">
+              <button wire:click="toggleWishlist({{ $this->record->id }})" class="{{ $this->isInViewBookWishlist() ? 'text-danger-600' : 'text-gray-400' }} hover:text-danger-900 dark:hover:text-danger-400">
                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                 </svg>
@@ -147,9 +147,70 @@
         @else
         <p class="text-gray-500">No reviews yet.</p>
         @endif
-    </div>
-    </div>
-  <div class="mt-4 max-w-2xl mx-auto"> <!-- Center the footer action as well -->
+
+        @if($this->record && $this->isBookPurchased())
+            @if($this->hasUserReviewed())
+                @php
+                    $this->userReview = $this->getUserReview();
+                    $this->rating = $this->userReview->rating;
+                    $this->comment = $this->userReview->comment;
+                @endphp
+                <div class="mt-6">
+                    <form wire:submit.prevent="updateReview" class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="font-semibold mr-2">Rating:</span>
+                            <div class="flex">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <button type="button" wire:click="setRating({{ $i }})" class="{{ $this->rating >= $i ? 'text-yellow-500' : 'text-gray-400' }} hover:text-yellow-500 focus:outline-none">
+                                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+                                        </svg>
+                                    </button>
+                                @endfor
+                            </div>
+                        </div>
+                        <div>
+                            <textarea wire:model="comment" class="w-full h-24 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your review..."></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Update Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            @else
+                <div class="mt-6">
+                    <form wire:submit.prevent="submitReview" class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="font-semibold mr-2">Rating:</span>
+                            <div class="flex">
+                              @for ($i = 1; $i <= 5; $i++)
+                                          <button type="button" wire:click="setRating({{ $i }})" class="{{ $this->rating >= $i ? 'text-yellow-500' : 'text-gray-400' }} hover:text-yellow-500 focus:outline-none">
+                                              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                                                  <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+                                              </svg>
+                                          </button>
+                                      @endfor
+                                  </div>
+                              </div>
+                              <div>
+                                  <textarea wire:model="comment" class="w-full h-24 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your review..."></textarea>
+                              </div>
+                              <div class="flex justify-end">
+                                  <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                      Submit Review
+                                  </button>
+                              </div>
+                          </form>
+                      </div>
+                  @endif
+                  @elseif($this->record)
+                      <p class="text-gray-500">You need to purchase this book to leave a review.</p>
+                  @endif
+          </div>
+      </div>
+      <div class="mt-4 max-w-2xl mx-auto"> <!-- Center the footer action as well -->
     {{ $this->getFooterActions()[0]->render() }}
   </div>
 
@@ -178,3 +239,4 @@
     });
   </script>
 </x-filament-panels::page>
+
