@@ -1,3 +1,8 @@
+<style>
+    .fi-header-heading{
+        color: white;
+    }
+</style>
 <x-filament-panels::page>
     <style>
         .container {
@@ -37,7 +42,7 @@
 
     <!-- Hero Section -->
     <div class="relative mb-8">
-        <img src="{{ asset('hero-books.png') }}" alt="Hero Image" class="w-full h-64 object-cover">
+        <img src="{{ asset('hero-books-balloons.png') }}" alt="Hero Image" class="w-full h-64 object-cover">
         <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <h1 class="text-4xl font-bold text-white">Welcome to Our Bookstore</h1>
         </div>
@@ -139,7 +144,7 @@
 
         @if($cartContent && count($cartContent) > 0)
             @foreach($cartContent as $bookId => $item)
-                <div class="flex items-center justify-between border-b py-2">
+                <di class="flex items-center justify-between border-b py-2">
                     <div>
                         <h3 class="font-semibold">{{ $item['title'] }}</h3>
                         <p>Price: ${{ number_format($item['price'], 2) }}</p>
@@ -150,7 +155,14 @@
                         </div>
                     </div>
                     <button wire:click="removeFromCart({{ $bookId }})" class="text-red-500" onclick="event.stopPropagation();">Remove</button>
-                </div>
+                </di<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const heading = document.getElementById('page-heading');
+    if (heading) {
+        heading.remove();
+    }
+});
+</script>v>
             @endforeach
             <div class="mt-4">
                 <p class="font-bold">Total: ${{ number_format($cartTotal, 2) }}</p>
@@ -186,4 +198,5 @@
         });
     });
 </script>
+
 </x-filament-panels::page>

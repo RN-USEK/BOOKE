@@ -28,7 +28,7 @@ class Dashboard extends Page implements HasForms
     use WithFileUploads;
 
     protected static ?string $navigationIcon = 'heroicon-o-home';
-    protected static ?string $navigationLabel = 'Home';
+    protected static ?string $navigationLabel = null;
     protected static ?string $slug = 'home'; // Add a unique slug
     protected static string $view = 'filament.app.pages.dashboard';
     protected static ?int $navigationSort = -2;
@@ -63,6 +63,7 @@ class Dashboard extends Page implements HasForms
                     ->disk('public')
             ]);
     }
+
     public function search()
     {
         Log::info('Search function called', [
