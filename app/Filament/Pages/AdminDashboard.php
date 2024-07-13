@@ -10,9 +10,14 @@ use App\Filament\Widgets\BooksByCategoryChart;
 
 class AdminDashboard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
+    protected static ?string $navigationIcon = 'heroicon-o-bug-ant';
+    protected static ?string $navigationLabel = 'Dashboard';
     protected static string $view = 'filament.pages.admin-dashboard';
+
+    public static function getColor(): ?string
+    {
+        return 'danger'; // You can change this to any color you prefer
+    }
 
     protected function getHeaderWidgets(): array
     {
@@ -27,7 +32,6 @@ class AdminDashboard extends Page
             OrdersChart::class,
             RevenueChart::class,
             BooksByCategoryChart::class,
-
         ];
     }
 }

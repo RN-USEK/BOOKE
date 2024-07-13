@@ -12,7 +12,7 @@
             background-color: white; /* Or your desired color */
         }
         .fi-sidebar {
-            background-color: peachpuff;
+            background-color: thistle;
         }
         .book-grid {
             display: grid;

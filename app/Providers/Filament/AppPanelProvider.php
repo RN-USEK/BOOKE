@@ -23,6 +23,10 @@ use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\CategoryBooks;
 use App\Filament\Pages\AdminDashboard;
 use App\Services\BookInteractionService;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\SetPanelColors;
+
+
 class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -37,7 +41,8 @@ class AppPanelProvider extends PanelProvider
             ->profile()
             ->default()
             ->sidebarWidth('12rem')
-            
+            // ->colors($this->getPanelColors())
+
             ->colors([
                 'primary' => Color::Blue,
                 'gray' => Color::Blue, 
@@ -73,10 +78,35 @@ class AppPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 \App\Http\Middleware\RedirectToAppLogin::class,
+                SetPanelColors::class,
 
             ])
             ->authMiddleware([
                 Authenticate::class,
             ]);
     }
+    // protected function getPanelColors(): array
+    // {
+    //     $user = Auth::user();
+
+    //     if (!$user) {
+    //         return [
+    //             'primary' => Color::Amber,
+    //         ];
+    //     }
+
+    //     if ($user->hasRole('admin')) {
+    //         return [
+    //             'primary' => Color::Red,
+    //         ];
+    //     } elseif ($user->hasRole('manager')) {
+    //         return [
+    //             'primary' => Color::Blue,
+    //         ];
+    //     } else {
+    //         return [
+    //             'primary' => Color::Green,
+    //         ];
+    //     }
+    // }
 }
