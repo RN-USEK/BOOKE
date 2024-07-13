@@ -88,6 +88,14 @@ return [
 
     'livewire_loading_delay' => 'default',
     
-
+    'widgets' => [
+        'namespace' => 'App\\Filament\\Widgets',
+        'path' => app_path('Filament/Widgets'),
+        'register' => [
+            \App\Filament\Widgets\StatsOverview::class,
+            \App\Filament\Widgets\OrdersChart::class,
+            \App\Filament\Widgets\RevenueChart::class,
+        ],
+    ],
 
 ];

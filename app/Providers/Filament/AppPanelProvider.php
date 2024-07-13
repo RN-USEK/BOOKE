@@ -21,6 +21,7 @@ use App\Filament\Pages\ViewBook;
 use App\Filament\Pages\Checkout;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\CategoryBooks;
+use App\Filament\Pages\AdminDashboard;
 use App\Services\BookInteractionService;
 class AppPanelProvider extends PanelProvider
 {
@@ -53,6 +54,7 @@ class AppPanelProvider extends PanelProvider
                 ViewBook::class,
                 Checkout::class,
                 CategoryBooks::class,
+                AdminDashboard::class,
             ])
 
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
