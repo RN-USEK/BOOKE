@@ -319,5 +319,13 @@ class Dashboard extends Page implements HasForms
         }
         return trim($imageQueryWords);
     }
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+        
+        // Only allow access if the user has the 'user' role
+        // and does not have 'admin' or 'manager' roles
+        return $user && $user->hasRole('user') && !$user->hasAnyRole(['admin', 'manager']);
+    }
 
 }

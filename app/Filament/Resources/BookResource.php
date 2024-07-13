@@ -52,10 +52,14 @@ class BookResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-            ])
+                Tables\Actions\EditAction::make()
+                    ->visible(fn (Book $record): bool => auth()->user()->hasRole('admin')),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn (Book $record): bool => auth()->user()->hasRole('admin')),            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn (): bool => auth()->user()->hasRole('admin')),
                 ]),
             ]);
     }

@@ -7,12 +7,18 @@ use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\OrdersChart;
 use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\BooksByCategoryChart;
+use Illuminate\Support\Facades\Auth;
 
 class AdminDashboard extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-bug-ant';
     protected static ?string $navigationLabel = 'Dashboard';
     protected static string $view = 'filament.pages.admin-dashboard';
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()->hasAnyRole(['admin', 'manager']);
+    }
 
     public static function getColor(): ?string
     {
