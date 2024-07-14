@@ -124,7 +124,7 @@
                 </div>
             </div>
         @endif
-
+<!-- For You -->
         <div class="section">
             <h2 class="section-title">For You</h2>
             <div class="book-grid">
@@ -133,19 +133,18 @@
                 @endforeach
             </div>
         </div>
-
+<!-- Browse Books -->
         <div class="section">
             <h2 class="section-title">Browse Books</h2>
             <div class="book-grid">
-                @foreach($this->getBooks() as $book)
+                @foreach($this->getBrowseBooks() as $book)
                     @include('partials.book-card', ['book' => $book])
                 @endforeach
             </div>
             <div class="mt-8">
-                {{ $this->getBooks()->links() }}
+                {{ $this->getBrowseBooks()->links()->with(['wire:click' => 'changeBrowsePage($page)']) }}
             </div>
         </div>
-    </div>
 
     <!-- Floating Cart Icon -->
     <div class="fixed bottom-4 right-4 z-50">

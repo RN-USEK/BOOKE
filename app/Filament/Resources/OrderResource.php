@@ -23,8 +23,8 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
+                Forms\Components\Select::make('user.name')
+                    ->visible(fn () => auth()->user()->hasAnyRole(['admin', 'manager']))
                     ->required(),
                 Forms\Components\TextInput::make('total_amount')
                     ->required()

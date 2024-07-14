@@ -42,7 +42,7 @@ class Dashboard extends Page implements HasForms
     public $recommendedBooks = [];
     public $categories = [];
     public $popularBooks = [];
-
+    public $currentBrowsePage = 1;
 
     public function mount(): void
     {
@@ -345,6 +345,14 @@ class Dashboard extends Page implements HasForms
         // Only allow access if the user has the 'user' role
         // and does not have 'admin' or 'manager' roles
         return $user && $user->hasRole('user') && !$user->hasAnyRole(['admin', 'manager']);
+    }
+    public function getBrowseBooks()
+    {
+        return Book::latest()->paginate(12, ['*'], 'browsePage', $this->currentBrowsePage);
+    }
+    public function changeBrowsePage($page)
+    {
+        $this->currentBrowsePage = $page;
     }
 
 }
