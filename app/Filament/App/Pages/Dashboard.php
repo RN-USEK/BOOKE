@@ -259,7 +259,7 @@ class Dashboard extends Page implements HasForms
     public function fetchPopularBooks()
     {
         $googleBooksService = app(GoogleBooksService::class);
-        $this->popularBooks = $googleBooksService->searchBooks('popular books');
+        $this->popularBooks = $googleBooksService->searchBooks('Best');
         $this->popularBooks = array_slice($this->popularBooks, 0, 5);
     }
 
