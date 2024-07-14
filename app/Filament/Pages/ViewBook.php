@@ -15,7 +15,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use App\Services\BookInteractionService;
 use App\Services\WishlistService;
 use Filament\Notifications\Notification;
-
+use Illuminate\Support\Facades\Redirect;
 class ViewBook extends Page
 {
     use InteractsWithForms;
@@ -72,9 +72,8 @@ class ViewBook extends Page
         return [
             Action::make('go back')
                 ->icon('heroicon-o-arrow-left')
-                ->action(function () {
-                    return $this->back();
-                }),
+                ->url(url()->previous())
+                ->openUrlInNewTab(false),
         ];
     }
 

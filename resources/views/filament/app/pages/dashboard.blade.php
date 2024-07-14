@@ -66,35 +66,44 @@
             </div>
         </div>
 
-        <!-- Browse By Category Section -->
-        <div class="section">
-            <h2 class="section-title">Browse By Category</h2>
-            <div class="flex flex-wrap gap-4">
-                @php
-                    $colors = ['red', 'blue', 'green', 'yellow', 'purple', 'pink', 'indigo', 'teal', 'orange', 'cyan', 'lime', 'violet', 'fuchsia', 'gray', 'brown'];
-                    $colorIndex = 0;
-                @endphp
+  <!-- Browse By Category Section -->
+<div class="section">
+    <h2 class="section-title">Browse By Category</h2>
+    <div class="flex flex-wrap gap-4">
+        @php
+            $colors = ['red', 'blue', 'green', 'purple', 'pink', 'indigo', 'teal', 'orange', 'cyan', 'lime', 'violet', 'fuchsia', 'gray', 'brown'];
+            $colorIndex = 0;
+        @endphp
 
-                @foreach($this->categories as $category)
-                    @php
-                        $color = $colors[$colorIndex % count($colors)];
-                        $colorIndex++;
-                    @endphp
-                    <a href="{{ route('category-books', ['category' => $category->id]) }}"
-                    class="px-4 py-2 rounded-full text-white font-semibold transition-transform hover:scale-105" 
-                        style="background-color: {{ $color }}">
-                        {{ $category->name }}
-                    </a>
-                @endforeach
-            </div>
-        </div>
+        @foreach($this->categories as $category)
+            @php
+                $color = $colors[$colorIndex % count($colors)];
+                $colorIndex++;
+            @endphp
+            <a href="{{ route('category-books', ['category' => $category->id]) }}"
+               class="category-button px-4 py-2 rounded-full text-white font-semibold transition-all duration-300 ease-in-out transform hover:scale-110" 
+               style="background-color: {{ $color }}">
+                {{ $category->name }}
+            </a>
+        @endforeach
+    </div>
+</div>
+
+<style>
+    .category-button {
+        transition: transform 0.3s ease-in-out !important;
+    }
+    .category-button:hover {
+        transform: scale(1.1) !important;
+    }
+</style>
 
         <!-- Search Form -->
         <div class="section">
             <h2 class="section-title">Search Books</h2>
             <form wire:submit.prevent="search" class="bg-gray-100 p-6 rounded-lg shadow">
                 {{ $this->form }}
-                <x-filament::button type="submit" class="mt-4">
+                <x-filament::button type="submit" class="mt-6">
                     Search
                 </x-filament::button>
             </form>

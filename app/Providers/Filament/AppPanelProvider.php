@@ -25,6 +25,8 @@ use App\Filament\Pages\AdminDashboard;
 use App\Services\BookInteractionService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\SetPanelColors;
+use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\View\View;
 
 
 class AppPanelProvider extends PanelProvider
@@ -83,7 +85,11 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+                        ->renderHook(
+                'panels::body.end',
+                fn (): View => view('filament.custom.footer')
+            );
     }
     // protected function getPanelColors(): array
     // {

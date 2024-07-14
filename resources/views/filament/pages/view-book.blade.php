@@ -58,7 +58,7 @@
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 relative">
           <button onclick="toggleCartVisibility(event)" class="absolute top-4 right-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
             <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd"/>
             </svg>
           </button>
           <h2 class="text-2xl font-bold mb-4 text-center">Your Cart</h2>
@@ -91,127 +91,134 @@
           @endif
         </div>
       </div>
-
       <!-- Floating Cart Icon -->
       <div class="fixed bottom-4 right-4 z-50">
-        <button onclick="toggleCartVisibility(event)" class="bg-white dark:bg-gray-800 shadow rounded-full p-3 focus:outline-none">
-          <svg id="cart-icon" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  @else
-    <div class="text-center text-gray-500 dark:text-gray-400">
-      No book data available.
-    </div>
-  @endif
-
-<!-- Reviews section -->
-<div class="mt-8 max-w-4xl mx-auto">
-    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-6">
-        <h2 class="text-2xl font-bold mb-4">Reviews</h2>
-
-        @if($this->record && $this->record->reviews->count() > 0)
-            <div class="flex items-center mb-6">
-                <span class="text-lg font-semibold mr-2">Average Rating:</span>
-                <span class="text-lg font-semibold mr-2">{{ number_format($this->record->averageRating(), 1) }}</span>
-                <span class="flex">
-                    @php
-                        $averageRating = round($this->record->averageRating());
-                    @endphp
-                    @for ($i = 1; $i <= 5; $i++)
-                        <svg class="h-6 w-6" style="{{ $i <= $averageRating ? 'color: #facc15;' : 'color: #d1d5db;' }}" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
-                        </svg>
-                    @endfor
-                </span>
+              <button onclick="toggleCartVisibility(event)" class="bg-white dark:bg-gray-800 shadow rounded-full p-3 focus:outline-none">
+                <svg id="cart-icon" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                </svg>
+              </button>
             </div>
-
-            @foreach($this->record->reviews as $review)
-                <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden shadow rounded-lg p-4 mb-4">
-                    <div class="flex items-center mb-2">
-                        <span class="font-semibold mr-2">Rating:</span>
-                        <span class="flex">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <svg class="h-5 w-5" style="{{ $i <= $review->rating ? 'color: #facc15;' : 'color: #d1d5db;' }}" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
-                                </svg>
-                            @endfor
-                        </span>
-                    </div>
-                    <p class="text-gray-700 dark:text-gray-300 mb-2">{{ $review->comment }}</p>
-                    <p class="text-sm text-gray-500">By {{ $review->user->name }} on {{ $review->created_at->format('M d, Y') }}</p>
-                </div>
-            @endforeach
+          </div>
         @else
-            <p class="text-gray-500">No reviews yet.</p>
+          <div class="text-center text-gray-500 dark:text-gray-400">
+            No book data available.
+          </div>
         @endif
+  <!-- Reviews section -->
+  <div class="mt-8 max-w-4xl mx-auto">
+    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-6">
+      <h2 class="text-2xl font-bold mb-4">Reviews</h2>
 
-        @if($this->record && $this->isBookPurchased())
-            @if($this->hasUserReviewed())
-                @php
-                    $this->userReview = $this->getUserReview();
-                    $this->rating = $this->userReview->rating;
-                    $this->comment = $this->userReview->comment;
-                @endphp
-                <div class="mt-6">
-                    <form wire:submit.prevent="updateReview" class="space-y-4">
-                        <div class="flex items-center">
-                            <span class="font-semibold mr-2">Rating:</span>
-                            <div class="flex">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <button type="button" wire:click="setRating({{ $i }})" class="{{ $this->rating >= $i ? 'text-yellow-500' : 'text-gray-400' }} hover:text-yellow-500 focus:outline-none">
-                                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
-                                        </svg>
-                                    </button>
-                                @endfor
-                            </div>
-                        </div>
-                        <div>
-                            <textarea wire:model="comment" class="w-full h-24 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your review..."></textarea>
-                        </div>
-                        <div class="flex justify-end">
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Update Review
-                            </button>
-                        </div>
-                    </form>
+      @if($this->record && $this->record->reviews->count() > 0)
+        <div class="flex items-center mb-6">
+          <span class="text-lg font-semibold mr-2">Average Rating:</span>
+          <span class="text-lg font-semibold mr-2">{{ number_format($this->record->averageRating(), 1) }}</span>
+          <span class="flex">
+            @php
+              $averageRating = round($this->record->averageRating());
+            @endphp
+            @for ($i = 1; $i <= 5; $i++)
+              <svg class="h-6 w-6" style="{{ $i <= $averageRating ? 'color: #facc15;' : 'color: #d1d5db;' }}" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+              </svg>
+            @endfor
+          </span>
+        </div>
+
+        @foreach($this->record->reviews as $review)
+          <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden shadow rounded-lg p-4 mb-4">
+            <div class="flex items-center mb-2">
+              <span class="font-semibold mr-2">Rating:</span>
+              <span class="flex">
+                @for ($i = 1; $i <= 5; $i++)
+                  <svg class="h-5 w-5" style="{{ $i <= $review->rating ? 'color: #facc15;' : 'color: #d1d5db;' }}" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+                  </svg>
+                @endfor
+              </span>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-2">{{ $review->comment }}</p>
+            <p class="text-sm text-gray-500">By {{ $review->user->name }} on {{ $review->created_at->format('M d, Y') }}</p>
+          </div>
+        @endforeach
+      @else
+        <p class="text-gray-500">No reviews yet.</p>
+      @endif
+
+      @if($this->record && $this->isBookPurchased())
+        @if($this->hasUserReviewed())
+          @php
+            $this->userReview = $this->getUserReview();
+            $this->rating = $this->userReview->rating;
+            $this->comment = $this->userReview->comment;
+          @endphp
+          <div class="mt-6">
+            <form wire:submit.prevent="updateReview" class="space-y-4">
+              <div class="flex items-center">
+                <span class="font-semibold mr-2">Rating:</span>
+                <div class="flex">
+                  @for ($i = 1; $i <= 5; $i++)
+                    <button type="button" wire:click="setRating({{ $i }})" class="{{ $this->rating >= $i ? 'text-yellow-500' : 'text-gray-400' }} hover:text-yellow-500 focus:outline-none">
+                      <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+                      </svg>
+                    </button>
+                  @endfor
                 </div>
-            @else
-                <div class="mt-6">
-                    <form wire:submit.prevent="submitReview" class="space-y-4">
-                        <div class="flex items-center">
-                            <span class="font-semibold mr-2">Rating:</span>
-                            <div class="flex">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <button type="button" wire:click="setRating({{ $i }})" class="{{ $this->rating >= $i ? 'text-yellow-500' : 'text-gray-400' }} hover:text-yellow-500 focus:outline-none">
-                                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
-                                        </svg>
-                                    </button>
-                                @endfor
-                            </div>
-                        </div>
-                        <div>
-                            <textarea wire:model="comment" class="w-full h-24 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your review..."></textarea>
-                        </div>
-                        <div class="flex justify-end">
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Submit Review
-                            </button>
-                        </div>
-                    </form>
+              </div>
+              <div>
+                <textarea wire:model="comment" class="w-full h-24 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your review..."></textarea>
+              </div>
+              <div class="flex justify-center">
+                <button type="submit" 
+                  style="margin-top: 0.5rem !important; padding-left: 1rem !important; padding-right: 1rem !important; padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; background-color: #3b82f6 !important; color: white !important; border-radius: 0.25rem !important; transition: background-color 0.2s ease-in-out !important;" 
+                  onmouseover="this.style.backgroundColor='#1e40af' !important;" 
+                  onmouseout="this.style.backgroundColor='#3b82f6' !important;"
+                >
+                  Update Review
+                </button>
+              </div>
+            </form>
+          </div>
+        @else
+          <div class="mt-6">
+            <form wire:submit.prevent="submitReview" class="space-y-4">
+              <div class="flex items-center">
+                <span class="font-semibold mr-2">Rating:</span>
+                <div class="flex">
+                @for ($i = 1; $i <= 5; $i++)
+                  <button type="button" wire:click="setRating({{ $i }})" class="hover:text-yellow-500 focus:outline-none">
+                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" style="color: {{ $this->rating >= $i ? '#facc15 !important' : '#d1d5db !important' }};">
+                      <path d="M10 15l-5.392 2.838 1.03-6.01L1 6.75l6.02-.876L10 1l2.98 4.874 6.02.876-4.638 4.078 1.03 6.01L10 15z"/>
+                    </svg>
+                  </button>
+                @endfor
+
                 </div>
-            @endif
-        @elseif($this->record)
-            <p class="text-gray-500">You need to purchase this book to leave a review.</p>
+              </div>
+              <div>
+                <textarea wire:model="comment" class="w-full h-24 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your review..."></textarea>
+              </div>
+              <div class="flex justify-center">
+                <button type="submit" 
+                  style="margin-top: 0.5rem !important; padding-left: 1rem !important; padding-right: 1rem !important; padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; background-color: #3b82f6 !important; color: white !important; border-radius: 0.25rem !important; transition: background-color 0.2s ease-in-out !important;" 
+                  onmouseover="this.style.backgroundColor='#1e40af' !important;" 
+                  onmouseout="this.style.backgroundColor='#3b82f6' !important;"
+                >
+                  Submit Review
+                </button>
+              </div>
+            </form>
+          </div>
         @endif
+      @elseif($this->record)
+        <p class="text-gray-500">You need to purchase this book to leave a review.</p>
+      @endif
     </div>
-</div>
+  </div>
 
-      <div class="mt-4 max-w-2xl mx-auto"> <!-- Center the footer action as well -->
+  <div class="mt-4 max-w-2xl mx-auto"> 
     {{ $this->getFooterActions()[0]->render() }}
   </div>
 
@@ -223,12 +230,12 @@
       if (cartSection.classList.contains('hidden')) {
         cartSection.classList.remove('hidden');
         cartIcon.innerHTML = `<svg class="h-4 w-4 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 011.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd"/>
                   </svg>`;
       } else {
         cartSection.classList.add('hidden');
         cartIcon.innerHTML = `<svg class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                    <path d="M3 1a1 1 000 2h1.22l.305 1.222a.997.997 000.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 000-2H6.414l1-1H14a1 1 00.894-.553l3-6A1 1 0017 3H6.28l-.31-1.243A1 1 005 1H3zM16 16.5a1.5 1.5 011-3 0 1.5 1.5 013 0zM6.5 18a1.5 1.5 0100-3 1.5 1.5 000 3z"/>
                   </svg>`;
       }
     }
@@ -240,4 +247,3 @@
     });
   </script>
 </x-filament-panels::page>
-
