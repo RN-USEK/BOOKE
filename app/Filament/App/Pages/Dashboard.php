@@ -22,6 +22,8 @@ use App\Services\CartService;
 use App\Models\Category;
 use App\Services\WishlistService;
 use Illuminate\Support\Facades\Session;
+use App\Services\RecommendationService;
+
 class Dashboard extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -228,16 +230,32 @@ class Dashboard extends Page implements HasForms
 
     public function fetchRecommendations()
     {
-        $googleBooksService = app(GoogleBooksService::class);
-        $query = $this->generateRecommendationQuery();
+        $user = Auth::user();
+        Log::info("Fetching recommendations for user: " . $user->id);
 
-        Log::info('Fetching recommendations with query: ' . $query);
+        $recommendationService = app(RecommendationService::class);
+        $googleBooksService = app(GoogleBooksService::class);
+
+        $query = $recommendationService->generateRecommendationQuery($user->id, 4);
+
+        Log::info('Generated recommendation query: ' . $query);
 
         $this->recommendedBooks = $googleBooksService->searchBooks($query);
 
+        Log::info('Fetched recommended books from Google Books API:', [
+            'count' => count($this->recommendedBooks),
+            'titles' => collect($this->recommendedBooks)->pluck('title')->toArray()
+        ]);
+
         // Limit to 4 recommended books
         $this->recommendedBooks = array_slice($this->recommendedBooks, 0, 4);
+
+        Log::info('Final recommended books:', [
+            'count' => count($this->recommendedBooks),
+            'titles' => collect($this->recommendedBooks)->pluck('title')->toArray()
+        ]);
     }
+
     public function fetchPopularBooks()
     {
         $googleBooksService = app(GoogleBooksService::class);
