@@ -8,6 +8,7 @@ use App\Filament\Widgets\OrdersChart;
 use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\BooksByCategoryChart;
 use Illuminate\Support\Facades\Auth;
+use App\Filament\Widgets\BookPriceRangeChart;
 
 class AdminDashboard extends Page
 {
@@ -38,6 +39,7 @@ class AdminDashboard extends Page
             OrdersChart::class,
             RevenueChart::class,
             BooksByCategoryChart::class,
+            BookPriceRangeChart::class,
         ];
     }
 }

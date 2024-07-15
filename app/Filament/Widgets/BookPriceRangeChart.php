@@ -4,32 +4,31 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
 use App\Models\Book;
-use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 
-class BooksByCategoryChart extends ChartWidget
+class BookPriceRangeChart extends ChartWidget
 {
-    protected static ?string $heading = 'Books by Category';
+    protected static ?string $heading = 'Books by Price Range';
 
     protected function getData(): array
     {
-        $data = $this->getBooksByCategoryData();
+        $data = $this->getBookPriceRangeData();
 
         return [
             'datasets' => [
                 [
                     'label' => 'Books',
                     'data' => $data->pluck('count')->toArray(),
-                    'backgroundColor' => $this->getColors($data->count()),
+                    'backgroundColor' => $this->getColors(count($data)),
                 ],
             ],
-            'labels' => $data->pluck('name')->toArray(),
+            'labels' => $data->pluck('range')->toArray(),
         ];
     }
 
     protected function getType(): string
     {
-        return 'pie';
+        return 'doughnut';
     }
 
     protected function getOptions(): array
@@ -51,12 +50,21 @@ class BooksByCategoryChart extends ChartWidget
         ];
     }
 
-    private function getBooksByCategoryData()
+    private function getBookPriceRangeData()
     {
-        return Category::select('categories.name', DB::raw('COUNT(books.id) as count'))
-            ->leftJoin('books', 'categories.id', '=', 'books.category_id')
-            ->groupBy('categories.id', 'categories.name')
-            ->orderBy('count', 'desc')
+        return DB::table('books')
+            ->select(DB::raw('
+                CASE
+                    WHEN price < 10 THEN "Under $10"
+                    WHEN price BETWEEN 10 AND 19.99 THEN "$10 - $19.99"
+                    WHEN price BETWEEN 20 AND 29.99 THEN "$20 - $29.99"
+                    WHEN price BETWEEN 30 AND 39.99 THEN "$30 - $39.99"
+                    ELSE "$40 and above"
+                END AS `range`,
+                COUNT(*) as count
+            '))
+            ->groupBy('range')
+            ->orderBy('range')
             ->get();
     }
 
@@ -65,10 +73,6 @@ class BooksByCategoryChart extends ChartWidget
         $colors = [
             '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
             '#FF9F40', '#C9CBCF', '#FF9F80', '#36A1EB', '#FFCF56',
-            '#4CC0C0', '#9967FF', '#FF9F41', '#C9CCCC', '#FF6484',
-            '#36A3EB', '#FFCC56', '#4BC1C0', '#9968FF', '#FF9F42',
-            '#C9CDEF', '#FF6584', '#36A4EB', '#FFCD56', '#4BC2C0',
-            '#9969FF', '#FF9F43', '#C9CDDF', '#FF6684', '#36A5EB'
         ];
         
         return array_slice($colors, 0, $count);
