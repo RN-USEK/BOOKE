@@ -147,72 +147,106 @@
         </div>
 
     <!-- Floating Cart Icon -->
-    <div class="fixed bottom-4 right-4 z-50">
-        <button onclick="toggleCartVisibility(event)" class="bg-white dark:bg-gray-800 shadow rounded-full p-3 focus:outline-none">
-            <svg id="cart-icon" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-            </svg>
-        </button>
-    </div>
+<div class="fixed bottom-4 right-4 z-50" style="position: fixed; top: 6rem; left: 12rem; z-index: 9999;">
+    <button onclick="toggleCartVisibility(event)" style="background-color: white; border-radius: 50%; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: none; cursor: pointer;">
+        <svg id="cart-icon" style="width: 24px; height: 24px; fill: black;" viewBox="0 0 20 20">
+            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+        </svg>
+    </button>
+</div>
 
-    <!-- Cart Section -->
-    <div id="cart-section" class="w-full lg:w-64 fixed top-16 right-4 lg:top-0 lg:right-0 lg:static lg:max-w-xs lg:ml-auto hidden">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 relative">
-            <button onclick="toggleCartVisibility(event)" class="absolute top-4 right-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
-                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-            </button>
-            <h2 class="text-2xl font-bold mb-4 text-center">Your Cart</h2>
-            @php
-                $cartContent = $this->getCartContent();
-                $cartTotal = $this->getCartTotal();
-            @endphp
-
-            @if($cartContent && count($cartContent) > 0)
-                @foreach($cartContent as $bookId => $item)
-                    <div class="flex items-center justify-between border-b py-2">
-                        <div>
-                            <h3 class="font-semibold">{{ $item['title'] }}</h3>
-                            <p>Price: ${{ number_format($item['price'], 2) }}</p>
-                        </div>
-                        <button wire:click="removeFromCart({{ $bookId }})" class="text-red-500" onclick="event.stopPropagation();">Remove</button>
-                    </div>
-                @endforeach
-                <div class="mt-4">
-                    <p class="font-bold">Total: ${{ number_format($cartTotal, 2) }}</p>
-                    <button wire:click="proceedToCheckout" style="margin-top: 0.5rem; padding-left: 1rem; padding-right: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #3b82f6; color: white; border-radius: 0.25rem; transition: background-color 0.2s ease-in-out;" onmouseover="this.style.backgroundColor='#1e40af';" onmouseout="this.style.backgroundColor='#3b82f6';">Proceed to Checkout</button>
-                </div>
-            @else
-                <p>Your cart is empty.</p>
-            @endif
-        </div>
-    </div>
-
-    <script>
-        function toggleCartVisibility(event) {
-            event.stopPropagation();
-            var cartSection = document.getElementById('cart-section');
-            var cartIcon = document.getElementById('cart-icon');
-            if (cartSection.classList.contains('hidden')) {
-                cartSection.classList.remove('hidden');
-                cartIcon.innerHTML = `<svg class="h-4 w-4 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>`;
-            } else {
-                cartSection.classList.add('hidden');
-                cartIcon.innerHTML = `<svg class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-                </svg>`;
-            }
+<!-- Cart Section -->
+<div id="cart-section" style="display: none; position: fixed; top: 6rem; left: 12rem; width: 300px; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 1rem; z-index: 9998;">
+    <style>
+        #cart-section h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-align: center;
         }
+        #cart-section .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.5rem 0;
+        }
+        #cart-section .cart-item h3 {
+            font-weight: 600;
+            margin: 0;
+        }
+        #cart-section .cart-item button {
+            color: #ef4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        #cart-section .cart-total {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        #cart-section .checkout-button {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #3b82f6;
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+    </style>
+    <button onclick="toggleCartVisibility(event)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; cursor: pointer;">
+        <!-- <svg style="width: 16px; height: 16px; fill: #6b7280;" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg> -->
+    </button>
+    <h2>Your Cart</h2>
+    @php
+        $cartContent = $this->getCartContent();
+        $cartTotal = $this->getCartTotal();
+    @endphp
 
-        document.querySelectorAll('#cart-section button').forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.stopPropagation();
-            });
+    @if($cartContent && count($cartContent) > 0)
+        @foreach($cartContent as $bookId => $item)
+            <div class="cart-item">
+                <div>
+                    <h3>{{ $item['title'] }}</h3>
+                    <p>Price: ${{ number_format($item['price'], 2) }}</p>
+                </div>
+                <button wire:click="removeFromCart({{ $bookId }})" onclick="event.stopPropagation();">Remove</button>
+            </div>
+        @endforeach
+        <div class="cart-total">
+            <p>Total: ${{ number_format($cartTotal, 2) }}</p>
+            <button wire:click="proceedToCheckout" class="checkout-button">Proceed to Checkout</button>
+        </div>
+    @else
+        <p>Your cart is empty.</p>
+    @endif
+</div>
+
+<script>
+    function toggleCartVisibility(event) {
+        event.stopPropagation();
+        var cartSection = document.getElementById('cart-section');
+        var cartIcon = document.getElementById('cart-icon');
+        if (cartSection.style.display === 'none') {
+            cartSection.style.display = 'block';
+            cartIcon.innerHTML = `<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>`;
+        } else {
+            cartSection.style.display = 'none';
+            cartIcon.innerHTML = `<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>`;
+        }
+    }
+
+    document.querySelectorAll('#cart-section button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.stopPropagation();
         });
-    </script>
+    });
+</script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
