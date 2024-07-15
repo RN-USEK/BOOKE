@@ -348,7 +348,7 @@ class Dashboard extends Page implements HasForms
     }
     public function getBrowseBooks()
     {
-        return Book::latest()->paginate(12, ['*'], 'browsePage', $this->currentBrowsePage);
+        return Book::latest()->paginate(15, ['*'], 'browsePage', $this->currentBrowsePage);
     }
     public function changeBrowsePage($page)
     {
