@@ -66,8 +66,7 @@ class AppPanelProvider extends PanelProvider
 
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->widgets([
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
+                //
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -91,28 +90,4 @@ class AppPanelProvider extends PanelProvider
                 fn (): View => view('filament.custom.footer')
             );
     }
-    // protected function getPanelColors(): array
-    // {
-    //     $user = Auth::user();
-
-    //     if (!$user) {
-    //         return [
-    //             'primary' => Color::Amber,
-    //         ];
-    //     }
-
-    //     if ($user->hasRole('admin')) {
-    //         return [
-    //             'primary' => Color::Red,
-    //         ];
-    //     } elseif ($user->hasRole('manager')) {
-    //         return [
-    //             'primary' => Color::Blue,
-    //         ];
-    //     } else {
-    //         return [
-    //             'primary' => Color::Green,
-    //         ];
-    //     }
-    // }
 }

@@ -25,11 +25,7 @@ class CategoryBooks extends Page
 
     public function mount($category)
     {
-        // dump($category);
-        // dd($this);
-        // $this->category = Category::findOrFail($category);
         $this->loadBooks();
-        // dump($this->books);
     }
 
     public function loadBooks()
@@ -59,7 +55,7 @@ class CategoryBooks extends Page
             static::$slug => static::class,
         ];
     }
-     ////////////// cart stuff
+     // cart functions
 
      public function toggleCart()
      {

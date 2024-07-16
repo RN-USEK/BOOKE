@@ -40,15 +40,6 @@
     .fi-sidebar-nav {
         background-color: {{ $colors['sidebar'] }} !important;
     }
-
-    /* .fi-sidebar-header,
-    .fi-topbar {
-        background-color: {{ $colors['header'] }} !important;
-    } */
-
-    /* Optional: Adjust text color for better contrast
-    .fi-sidebar-header .fi-sidebar-header-heading,
-    .fi-topbar .fi-topbar-header-heading {
-        color: {{ $colors['primary'][700] }} !important;
+    
     } */
 </style>
