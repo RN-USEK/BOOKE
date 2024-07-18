@@ -1,6 +1,5 @@
 # Booke - AI-Powered E-Bookstore
-
-![Booke Logo](public/logo.png)
+<img src="public/logo.png" alt="Booke Logo" width="200"/>
 Booke is an advanced e-bookstore application built with Laravel and FilamentPHP. It leverages AI technologies to provide personalized book recommendations and image-based book searches.
 
 ## Features
