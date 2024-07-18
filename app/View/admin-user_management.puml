@@ -1,11 +1,55 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+actor Admin
+participant "Admin Panel" as FilamentPanel
+participant "UserResource" as UserResource
+participant "UserPolicy" as UserPolicy
+participant "ListUsers" as ListUsers
+participant "CreateUser" as CreateUser
+participant "EditUser" as EditUser
+participant "User" as UserModel
+database "Database" as DB
 
-autonumber
+Admin -> FilamentPanel : Access User Management
+FilamentPanel -> UserResource : Request User List
+UserResource -> UserPolicy : viewAny(admin)
+UserPolicy --> UserResource : Allow
+UserResource -> ListUsers : Load Users List
+ListUsers -> DB : Query Users
+DB --> ListUsers : Return User Data
+ListUsers --> Admin : Display User List
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+alt Create New User
+    Admin -> ListUsers : Click "Create User"
+    ListUsers -> UserPolicy : create(admin)
+    UserPolicy --> ListUsers : Allow
+    ListUsers -> CreateUser : Open Create User Form
+    Admin -> CreateUser : Fill User Details
+    CreateUser -> UserResource : Submit New User Data
+    UserResource -> UserModel : Create New User
+    UserModel -> DB : Insert New User
+    DB --> Admin : Confirm User Created
+end
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+alt Edit Existing User
+    Admin -> ListUsers : Select User to Edit
+    ListUsers -> UserPolicy : update(admin, user)
+    UserPolicy --> ListUsers : Allow
+    ListUsers -> EditUser : Open Edit User Form
+    Admin -> EditUser : Modify User Details
+    EditUser -> UserResource : Submit Updated User Data
+    UserResource -> UserModel : Update User
+    UserModel -> DB : Update User Record
+    DB --> Admin : Confirm User Updated
+end
+
+alt Delete User
+    Admin -> ListUsers : Select User to Delete
+    ListUsers -> UserPolicy : delete(admin, user)
+    UserPolicy --> ListUsers : Allow
+    ListUsers -> UserResource : Request User Deletion
+    UserResource -> UserModel : Delete User
+    UserModel -> DB : Delete User Record
+    DB --> Admin : Confirm User Deleted
+end
+
 @enduml

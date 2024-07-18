@@ -1,11 +1,88 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+actor User
+participant "CheckoutPage" as CheckoutPage
+participant "Form" as Form
+participant "CartSession" as CartSession
+participant "Notification" as Notification
+participant "Order" as Order
+participant "OrderItem" as OrderItem
+participant "BookInteractionService" as BookInteractionService
+database "Database" as Database
+participant "Log" as Log
+participant "Redirect" as Redirect
 
-autonumber
+User -> CheckoutPage: Access checkout page
+activate CheckoutPage
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+CheckoutPage -> Form: fill()
+activate Form
+Form --> CheckoutPage: Form filled
+deactivate Form
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+User -> CheckoutPage: Submit form (shippingAddress, paymentMethod)
+CheckoutPage -> CartSession: get('cart')
+activate CartSession
+CartSession --> CheckoutPage: Return cart content
+deactivate CartSession
+
+alt Cart is empty
+    CheckoutPage -> Notification: make(title: 'Cart is empty', body: 'Please add items to your cart before checking out.')
+    Notification --> User: Display notification
+else Cart is not empty
+    CheckoutPage -> Form: getState()
+    activate Form
+    Form --> CheckoutPage: Return form data
+    deactivate Form
+
+    CheckoutPage -> Database: DB::beginTransaction()
+    activate Database
+
+    alt Successful order creation
+        CheckoutPage -> Order: create(user_id, total_amount, status: 'placed', shipping_address, payment_method)
+        activate Order
+        Order --> Database: Save order
+        Order --> CheckoutPage: Return order
+        deactivate Order
+
+        loop For each item in cart
+            CheckoutPage -> OrderItem: create(order_id, book_id, quantity, price)
+            activate OrderItem
+            OrderItem --> Database: Save order item
+            OrderItem --> CheckoutPage: Return order item
+            deactivate OrderItem
+
+            CheckoutPage -> BookInteractionService: recordInteraction(book_id, 'purchase')
+            activate BookInteractionService
+            BookInteractionService --> CheckoutPage
+            deactivate BookInteractionService
+        end
+
+        CheckoutPage -> Database: DB::commit()
+        deactivate Database
+
+        CheckoutPage -> CartSession: forget('cart')
+        activate CartSession
+        CartSession --> CheckoutPage
+        deactivate CartSession
+
+        CheckoutPage -> Notification: make(title: 'Order placed successfully')
+        Notification --> User: Display notification
+
+        CheckoutPage -> Redirect: route('filament.app.pages.dashboard.index')
+        Redirect --> User: Redirect to dashboard
+    else Order creation fails
+        CheckoutPage -> Database: DB::rollback()
+        deactivate Database
+
+        CheckoutPage -> Log: error('Error placing order')
+        activate Log
+        Log --> CheckoutPage: Log error
+        deactivate Log
+
+        CheckoutPage -> Notification: make(title: 'Error placing order', body: 'An error occurred while placing your order. Please try again.')
+        Notification --> User: Display error notification
+    end
+end
+
+deactivate CheckoutPage
 @enduml

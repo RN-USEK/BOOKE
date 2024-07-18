@@ -1,11 +1,75 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+actor User
+participant "ViewBook Page" as ViewBook
+participant WishlistService
+participant BookInteractionService
+participant "Book Model" as Book
+participant "Review Model" as Review
+participant "Wishlist Model" as Wishlist
+database Database
 
-autonumber
+User -> ViewBook : Access book page
+activate ViewBook
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+ViewBook -> Book : Load book details
+Book --> ViewBook : Return book data
+ViewBook -> Review : Fetch book reviews
+Review --> ViewBook : Return reviews
+ViewBook --> User : Display book and reviews
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+alt Add to Wishlist
+    User -> ViewBook : Click "Add to Wishlist"
+    ViewBook -> WishlistService : toggleWishlist(bookId)
+    activate WishlistService
+    WishlistService -> Wishlist : Create or delete wishlist entry
+    Wishlist -> Database : Update wishlist record
+    Database --> Wishlist : Confirm update
+    Wishlist --> WishlistService : Return result
+    WishlistService -> BookInteractionService : recordInteraction(bookId, 'wishlist')
+    BookInteractionService -> Database : Record interaction
+    Database --> BookInteractionService : Confirm record
+    WishlistService --> ViewBook : Return updated wishlist status
+    deactivate WishlistService
+    ViewBook --> User : Update wishlist button
+end
+
+alt View Reviews
+    User -> ViewBook : Scroll to reviews section
+    ViewBook -> Review : Fetch detailed reviews
+    Review --> ViewBook : Return detailed reviews
+    ViewBook --> User : Display detailed reviews
+end
+
+alt Leave or Edit Review
+    User -> ViewBook : Click "Leave Review" or "Edit Review"
+    ViewBook -> ViewBook : isBookPurchased()
+    alt Book is purchased
+        ViewBook -> Review : Check for existing review
+        Review --> ViewBook : Return existing review (if any)
+
+        alt New Review
+            User -> ViewBook : Submit new review
+            ViewBook -> Review : Create new review
+            Review -> Database : Insert new review
+            Database --> Review : Confirm insertion
+            Review --> ViewBook : Return new review
+        else Edit Existing Review
+            User -> ViewBook : Update existing review
+            ViewBook -> Review : Update review
+            Review -> Database : Update review record
+            Database --> Review : Confirm update
+            Review --> ViewBook : Return updated review
+        end
+
+        ViewBook -> BookInteractionService : recordReview(bookId, rating)
+        BookInteractionService -> Database : Record review interaction
+        Database --> BookInteractionService : Confirm record
+        ViewBook --> User : Display updated review section
+    else Book not purchased
+        ViewBook --> User : Display "Purchase required" message
+    end
+end
+
+deactivate ViewBook
+
 @enduml

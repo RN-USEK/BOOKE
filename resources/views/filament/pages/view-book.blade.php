@@ -53,44 +53,63 @@
         </div>
       </div>
 
-      <!-- Cart Section -->
-      <div id="cart-section" class="w-full lg:w-64 fixed top-16 right-4 lg:top-0 lg:right-0 lg:static lg:max-w-xs lg:ml-auto hidden">
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 relative">
-          <button onclick="toggleCartVisibility(event)" class="absolute top-4 right-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
-            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd"/>
-            </svg>
-          </button>
-          <h2 class="text-2xl font-bold mb-4 text-center">Your Cart</h2>
-          @php
-            $cartContent = $this->getCartContent();
-            $cartTotal = $this->getCartTotal();
-          @endphp
+<!-- Cart Section -->
+<div id="cart-section" class="w-full lg:w-64 fixed top-16 right-4 lg:top-0 lg:right-0 lg:static lg:max-w-xs lg:ml-auto hidden">
+  <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 relative">
+    <button onclick="toggleCartVisibility(event)" class="absolute top-4 right-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+      <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+    <h2 class="text-2xl font-bold mb-4 text-center">Your Cart</h2>
+    @php
+      $cartContent = $this->getCartContent();
+      $cartTotal = $this->getCartTotal();
+    @endphp
 
-          @if($cartContent && count($cartContent) > 0)
-            @foreach($cartContent as $bookId => $item)
-              <div class="flex items-center justify-between border-b py-2">
-                <div>
-                  <h3 class="font-semibold">{{ $item['title'] }}</h3>
-                  <p>Price: ${{ number_format($item['price'], 2) }}</p>
-                  <div class="flex items-center">
-                    <!-- <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] - 1 }})" class="px-2 py-1 bg-gray-200 rounded" onclick="event.stopPropagation();">-</button> -->
-                    <!-- <span class="mx-2">{{ $item['quantity'] }}</span> -->
-                    <!-- <button wire:click="updateCartQuantity({{ $bookId }}, {{ $item['quantity'] + 1 }})" class="px-2 py-1 bg-gray-200 rounded" onclick="event.stopPropagation();">+</button> -->
-                  </div>
-                </div>
-                <button wire:click="removeFromCart({{ $bookId }})" class="text-red-500" onclick="event.stopPropagation();">Remove</button>
+    @if($cartContent && count($cartContent) > 0)
+      @foreach($cartContent as $bookId => $item)
+        <div class="flex items-center justify-between border-b py-2">
+          <div class="flex items-center">
+          @if(isset($item['cover_image']) && $item['cover_image'])
+              <img src="{{ $item['cover_image'] }}" alt="{{ $item['title'] }}" 
+                   style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                   onload="console.log('Image loaded successfully:', '{{ $item['cover_image'] }}')"
+                   onerror="console.error('Failed to load image:', '{{ $item['cover_image'] }}')">
+              <script>
+                console.log('Attempting to load image:', '{{ $item['cover_image'] }}');
+              </script>
+            @else
+              <div style="width: 48px; height: 48px; background-color: #f3f4f6; border-radius: 4px; margin-right: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <span style="font-size: 10px; color: #9ca3af;">No Image</span>
               </div>
-            @endforeach
-            <div class="mt-4">
-              <p class="font-bold">Total: ${{ number_format($cartTotal, 2) }}</p>
-              <button wire:click="proceedToCheckout" style="margin-top: 0.5rem; padding-left: 1rem; padding-right: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #3b82f6; color: white; border-radius: 0.25rem; transition: background-color 0.2s ease-in-out;" onmouseover="this.style.backgroundColor='#1e40af';" onmouseout="this.style.backgroundColor='#3b82f6';">Proceed to Checkout</button>
+              <script>
+                console.log('No image URL for book:', '{{ $item['title'] }}');
+              </script>
+            @endif
+            <div>
+              <h3 class="font-semibold">{{ $item['title'] }}</h3>
+              <p>Price: ${{ number_format($item['price'], 2) }}</p>
             </div>
-          @else
-            <p>Your cart is empty.</p>
-          @endif
+          </div>
+          <button wire:click="removeFromCart({{ $bookId }})" 
+                  style="color: #ef4444; font-weight: bold; padding: 4px 8px; border: 1px solid #ef4444; border-radius: 4px; transition: all 0.3s;" 
+                  onmouseover="this.style.backgroundColor='#ef4444'; this.style.color='white';" 
+                  onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ef4444';"
+                  onclick="event.stopPropagation();">
+            Remove
+          </button>
         </div>
+      @endforeach
+      <div class="mt-4">
+        <p class="font-bold">Total: ${{ number_format($cartTotal, 2) }}</p>
+        <button wire:click="proceedToCheckout" style="margin-top: 0.5rem; padding-left: 1rem; padding-right: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #3b82f6; color: white; border-radius: 0.25rem; transition: background-color 0.2s ease-in-out;" onmouseover="this.style.backgroundColor='#1e40af';" onmouseout="this.style.backgroundColor='#3b82f6';">Proceed to Checkout</button>
       </div>
+    @else
+      <p>Your cart is empty.</p>
+    @endif
+  </div>
+</div>
       <!-- Floating Cart Icon -->
       <div class="fixed bottom-4 right-4 z-50">
               <button onclick="toggleCartVisibility(event)" class="bg-white dark:bg-gray-800 shadow rounded-full p-3 focus:outline-none">
@@ -246,4 +265,7 @@
       });
     });
   </script>
+  <script>
+  console.log('Cart content:', @json($cartContent));
+</script>
 </x-filament-panels::page>

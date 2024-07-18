@@ -118,7 +118,17 @@ class Checkout extends Page implements HasForms
 
     public function getCartContent()
     {
-        return Session::get('cart', []);
+        $cart = Session::get('cart', []);
+        
+        // Fetch book details including cover image
+        foreach ($cart as $bookId => &$item) {
+            $book = \App\Models\Book::find($bookId);
+            if ($book) {
+                $item['cover_image'] = $book->cover_image;
+            }
+        }
+        
+        return $cart;
     }
 
     public function getCartTotal()

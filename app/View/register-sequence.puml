@@ -1,11 +1,25 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+actor User
+participant "RegistrationPage" as RP
+participant "Auth" as A
+participant "User" as U
+participant "Notification" as N
+participant "LoginPage" as LP
 
-autonumber
-
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+User -> RP: Access registration page
+RP --> User: Display registration form
+User -> RP: Fill in registration details
+User -> RP: Submit registration form
+RP -> A: RegisterUser(userDetails)
+A -> U: CreateUser(userDetails)
+U --> A: User created
+A --> RP: Registration result
+alt Registration successful
+    RP -> N: Send welcome notification
+    N --> User: Display welcome message
+    RP -> LP: Redirect to login page
+    LP --> User: Show login page
+else Registration failed
+    RP --> User: Show error message
+end
 @enduml

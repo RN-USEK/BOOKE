@@ -1,11 +1,78 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+actor User
+participant "HomePage" as HomePage
+participant "GoogleBooksService" as GoogleBooksService
+participant "GoogleVisionService" as GoogleVisionService
+participant "CategoryModel" as CategoryModel
+participant "RecommendationService" as RecommendationService
+participant "Notification" as Notification
+participant "Log" as Log
 
-autonumber
+User -> HomePage: Visit home page
+activate HomePage
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+HomePage -> HomePage: fetchPopularBooks()
+activate GoogleBooksService
+HomePage -> GoogleBooksService: Fetch popular books from Google Books API
+GoogleBooksService --> HomePage: Return popular books
+deactivate GoogleBooksService
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+HomePage -> HomePage: fetchCategories()
+activate CategoryModel
+HomePage -> CategoryModel: Fetch categories from database
+CategoryModel --> HomePage: Return categories
+deactivate CategoryModel
+
+HomePage -> HomePage: fetchRecommendations()
+activate RecommendationService
+HomePage -> RecommendationService: Generate recommendation query
+RecommendationService -> GoogleBooksService: Fetch recommended books based on user interactions
+activate GoogleBooksService
+GoogleBooksService --> RecommendationService: Return recommended books
+deactivate GoogleBooksService
+RecommendationService --> HomePage: Return recommended books
+deactivate RecommendationService
+
+HomePage --> User: Display popular books, categories, and recommended books
+
+== Text Query Search ==
+
+User -> HomePage: Enter text search query
+HomePage -> Log: Log search function call
+HomePage -> GoogleBooksService: searchBooks(query)
+activate GoogleBooksService
+GoogleBooksService --> HomePage: Return search results
+deactivate GoogleBooksService
+HomePage -> Log: Log search results
+alt No results found
+    HomePage -> Notification: Show "No Results" notification
+    Notification --> User: Display warning
+else Results found
+    HomePage --> User: Display search results
+end
+
+== Image Query Search ==
+
+User -> HomePage: Upload image for search
+HomePage -> Log: Log image upload
+HomePage -> GoogleVisionService: detectObjects(imagePath)
+activate GoogleVisionService
+GoogleVisionService --> HomePage: Return detected objects
+deactivate GoogleVisionService
+HomePage -> Log: Log detected objects
+HomePage --> User: Display detected objects (keywords)
+User -> HomePage: Confirm or modify keywords
+HomePage -> GoogleBooksService: searchBooks(confirmedKeywords)
+activate GoogleBooksService
+GoogleBooksService --> HomePage: Return search results
+deactivate GoogleBooksService
+HomePage -> Log: Log search results
+alt No results found
+    HomePage -> Notification: Show "No Results" notification
+    Notification --> User: Display warning
+else Results found
+    HomePage --> User: Display search results
+end
+
+deactivate HomePage
 @enduml

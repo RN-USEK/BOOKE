@@ -75,7 +75,7 @@ class ViewBook extends Page
                 ->url(url()->previous())
                 ->openUrlInNewTab(false),
         ];
-    }
+    } 
 
     public function isInViewBookWishlist()
     {
@@ -93,20 +93,29 @@ class ViewBook extends Page
     public function toggleCart()
     {
         $cart = Session::get('cart', []);
-
+    
         if (isset($cart[$this->record->id])) {
             unset($cart[$this->record->id]);
+            Log::info('Book removed from cart', ['book_id' => $this->record->id]);
         } else {
             $cart[$this->record->id] = [
+                'id' => $this->record->id,
                 'title' => $this->record->title,
                 'price' => $this->record->price,
                 'quantity' => 1,
+                'cover_image' => $this->record->cover_image,
             ];
+            Log::info('Book added to cart', [
+                'book_id' => $this->record->id,
+                'title' => $this->record->title,
+                'cover_image' => $this->record->cover_image,
+            ]);
         }
-
+    
         Session::put('cart', $cart);
         $this->dispatch('cart-updated');
     }
+
     public function isInCart()
     {
         if ($this->record) {

@@ -1,7 +1,7 @@
 @startuml
 actor Admin
 participant "Login Page" as LoginPage
-participant "AuthenticationService" as AuthService
+participant "Auth" as AuthService
 participant "AdminDashboard" as AdminDashboard
 participant "StatsOverview" as StatsWidget
 participant "OrdersChart" as OrdersWidget

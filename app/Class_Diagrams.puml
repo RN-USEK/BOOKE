@@ -1,11 +1,638 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+!define FILE FileUpload
+!define TEXT TextInput
 
-autonumber
+class Dashboard {
+    - static ?string $navigationIcon = 'heroicon-o-home'
+    - static ?string $navigationLabel = null
+    - static ?string $slug = 'home'
+    - static string $view = 'filament.app.pages.dashboard'
+    - static ?int $navigationSort = -2
+    - static ?string $title = 'Home'
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+    - string $searchQuery = ''
+    - mixed $imageUpload
+    - mixed $searchResults = null
+    - array $recommendedBooks = []
+    - array $categories = []
+    - array $popularBooks = []
+    - int $currentBrowsePage = 1
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+    + void mount()
+    + Form form(Form $form): Form
+    + void search()
+    + Collection getBooks()
+    + void toggleWishlist(int $bookId)
+    + bool isInWishlist(int $bookId)
+    + void addToCart(int $bookId)
+    + void removeFromCart(int $bookId)
+    + void fetchRecommendations()
+    + void fetchPopularBooks()
+    + void fetchCategories()
+    + void toggleCart()
+    + bool isInCart()
+    + array getCartContent()
+    + float getCartTotal()
+    + void updateCartQuantity(int $bookId, int $quantity)
+    + redirect proceedToCheckout()
+    + string getImageQueryWords()
+    + static bool canAccess()
+    + Paginator getBrowseBooks()
+    + void changeBrowsePage(int $page)
+}
+
+class AdminDashboard {
+    - static ?string $navigationIcon = 'heroicon-o-bug-ant'
+    - static ?string $navigationLabel = 'Dashboard'
+    - static string $view = 'filament.pages.admin-dashboard'
+
+    + static bool canAccess()
+    + static ?string getColor()
+    + array getHeaderWidgets()
+    + array getFooterWidgets()
+}
+
+class CategoryBooks {
+    - static ?string $navigationIcon = 'heroicon-o-document-text'
+    - static string $view = 'filament.pages.category-books'
+    - static ?string $slug = 'app/category/{category}'
+    - static bool $shouldRegisterNavigation = false
+
+    + Category $category
+    + Collection $books
+
+    + void mount(string $category)
+    + void loadBooks()
+    + array getViewData()
+    + static array getRoutes()
+    + void toggleCart()
+    + bool isInCart()
+    + array getCartContent()
+    + float getCartTotal()
+    + void updateCartQuantity(int $bookId, int $quantity)
+    + redirect proceedToCheckout()
+}
+
+class Checkout {
+    - static ?string $navigationIcon = 'heroicon-o-document-text'
+    - static string $view = 'filament.pages.checkout'
+    - static bool $shouldRegisterNavigation = false
+
+    + string $shippingAddress
+    + string $paymentMethod
+
+    + void mount()
+    + Form form(Form $form): Form
+    + void submit()
+    + array getCartContent()
+    + float getCartTotal()
+}
+
+class ViewBook {
+    + int $rating
+    + string $comment
+    + Review $userReview
+    + ?Book $record = null
+
+    + void mount()
+    + array getHeaderActions()
+    + array getFooterActions()
+    + bool isInViewBookWishlist()
+    + void toggleWishlist()
+    + void toggleCart()
+    + bool isInCart()
+    + array getCartContent()
+    + float getCartTotal()
+    + void updateCartQuantity(int $bookId, int $quantity)
+    + void removeFromCart(int $bookId)
+    + redirect proceedToCheckout()
+    + void loadUserReview()
+    + bool isBookPurchased()
+    + bool hasUserReviewed()
+    + Review getUserReview()
+    + void setRating(int $rating)
+    + void submitReview()
+    + void updateReview()
+}
+
+class BookInteractionResource {
+    - static ?string $model = BookInteraction::class
+    - static ?string $navigationIcon = 'heroicon-o-rectangle-stack'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+    + static bool canViewAny()
+}
+
+class BookResource {
+    - static ?string $model = Book::class
+    - static ?string $navigationIcon = 'heroicon-o-book-open'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+}
+
+class CategoryResource {
+    - static ?string $model = Category::class
+    - static ?string $navigationIcon = 'heroicon-o-rectangle-stack'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+}
+
+class OrderItemResource {
+    - static ?string $model = OrderItem::class
+    - static ?string $navigationIcon = 'heroicon-o-rectangle-stack'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+    + static bool canViewAny()
+}
+
+class OrderResource {
+    - static ?string $model = Order::class
+    - static ?string $navigationIcon = 'heroicon-o-rectangle-stack'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+    + static bool canCreate(): bool
+    + static bool canEdit(Model $record): bool
+    + static bool canDelete(Model $record): bool
+    + static bool canViewAny(): bool
+    + static bool canView(Model $record): bool
+    + Builder getEloquentQuery(): Builder
+}
+
+class ReviewResource {
+    - static ?string $model = Review::class
+    - static ?string $navigationIcon = 'heroicon-o-star'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+    + Builder getEloquentQuery(): Builder
+}
+
+class UserResource {
+    - static ?string $model = User::class
+    - static ?string $navigationIcon = 'heroicon-o-users'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+}
+
+class WishlistResource {
+    - static ?string $model = Wishlist::class
+    - static ?string $navigationIcon = 'heroicon-o-heart'
+
+    + Form form(Form $form): Form
+    + Table table(Table $table): Table
+    + array getRelations()
+    + array getPages()
+    + Builder getEloquentQuery(): Builder
+    + static bool canCreate(): bool
+    + static bool canDelete(Model $record): bool
+    + static bool canEdit(Model $record): bool
+}
+
+class BookPriceRangeChart {
+    - static ?string $heading = 'Books by Price Range'
+
+    + array getData(): array
+    + string getType(): string
+    + array getOptions(): array
+    - Collection getBookPriceRangeData()
+    - array getColors(int $count): array
+}
+
+class BooksByCategoryChart {
+    - static ?string $heading = 'Books by Category'
+
+    + array getData(): array
+    + string getType(): string
+    + array getOptions(): array
+    - Collection getBooksByCategoryData()
+    - array getColors(int $count): array
+}
+
+class OrdersChart {
+    - static ?string $heading = 'Order Amounts Over Time'
+
+    + array getData(): array
+    + string getType(): string
+    + array getOptions(): array
+    - Collection getOrdersData()
+}
+
+class RevenueChart {
+    - static ?string $heading = 'Cumulative Revenue by Order'
+
+    + array getData(): array
+    + string getType(): string
+    + array getOptions(): array
+    - Collection getRevenueData()
+    - array calculateCumulativeRevenue(Collection $orders)
+}
+
+class StatsOverview {
+    + array getStats(): array
+    - string getTotalRevenue(): string
+}
+
+class Book {
+    + string $policyName
+    + array $fillable
+    + BelongsTo category()
+    + BelongsToMany wishlistedBy()
+    + HasMany reviews()
+    + float averageRating()
+    + HasMany interactions()
+}
+
+class BookInteraction {
+    + int user_id
+    + int book_id
+    + string interaction_type
+    + int score
+    + BelongsTo user()
+    + BelongsTo book()
+}
+
+class GoogleBooksService {
+    - string $apiKey
+    - string $baseUrl = 'https://www.googleapis.com/books/v1/volumes'
+
+    + __construct()
+    + array searchBooks(string $query)
+    - int getRandomStartIndex()
+    - array processAndSaveBooks(array $items)
+    - bool isValidBookData(array $bookData, array $saleInfo)
+    - Category getOrCreateCategory(string $categoryName)
+}
+
+class GoogleVisionService {
+    + array detectObjects(string $imagePath)
+}
+
+class Wishlist {
+    + int user_id
+    + int book_id
+    + BelongsTo user()
+    + BelongsTo book()
+    + scopeForUser(Builder $query, int $userId): Builder
+}
+
+class Category {
+    + string name
+    + array $fillable
+    + HasMany books()
+}
+
+class RecommendationService {
+    + __construct()
+    + string generateRecommendationQuery(int $userId, int $limit = 5)
+    - string constructQuery(array $recommendedBookIds)
+    - array extractSignificantWords(string $title, int $wordCount)
+    - string getAuthorLastName(string $author)
+    - array getUserInteractions(int $userId)
+    - array getAllUsers()
+    - array calculateSimilarities(int $userId, array $userInteractions, array $allUsers)
+    - array getTopRecommendations(array $similarities, array $userInteractions, int $limit)
+}
+
+class CartService {
+    + static void add(Book $book)
+    + static void remove(int $bookId)
+    + static void update(int $bookId, int $quantity)
+    + static void clear()
+    + static array getContent()
+    + static float getTotal()
+}
+
+class Auth {
+}
+
+class Notification {
+}
+
+class Storage {
+}
+
+class Log {
+}
+
+class Session {
+}
+
+class OrdersChart {
+}
+
+class RevenueChart {
+}
+
+class BooksByCategoryChart {
+}
+
+class BookPriceRangeChart {
+}
+
+class Order {
+    + int user_id
+    + float total_amount
+    + string status
+    + string shipping_address
+    + string payment_method
+    + array $fillable
+    + BelongsTo user()
+    + HasMany items()
+}
+
+class OrderItem {
+    + int order_id
+    + int book_id
+    + int quantity
+    + float price
+    + array $fillable
+    + BelongsTo order()
+    + BelongsTo book()
+}
+
+class Review {
+    + int user_id
+    + int book_id
+    + int rating
+    + string comment
+    + array $fillable
+    + BelongsTo user()
+    + BelongsTo book()
+}
+
+class User {
+    + string name
+    + string email
+    + string password
+    + array $fillable
+    + array $hidden
+    + array $casts
+    + bool canAccessPanel(Panel $panel)
+    + HasMany wishlist()
+    + HasMany reviews()
+    + HasMany bookInteractions()
+    + HasMany orders()
+    + Collection purchasedBooks()
+}
+
+class BookInteractionService {
+    + void recordInteraction(int $bookId, string $interactionType)
+    + void recordReview(int $bookId, int $rating)
+    + float calculateBookScore(int $bookId)
+}
+
+class WishlistService {
+    + static bool isInWishlist(int $bookId)
+    + static void toggleWishlist(int $bookId)
+}
+
+class BookPolicy {
+    + bool viewAny(User $user): bool
+    + bool view(User $user, Book $book): bool
+    + bool create(User $user): bool
+    + bool update(User $user, Book $book): bool
+    + bool delete(User $user, Book $book): bool
+    + bool deleteAny(User $user): bool
+    + bool forceDelete(User $user, Book $book): bool
+    + bool forceDeleteAny(User $user): bool
+    + bool restore(User $user, Book $book): bool
+    + bool restoreAny(User $user): bool
+    + bool replicate(User $user, Book $book): bool
+    + bool reorder(User $user): bool
+}
+
+class CategoryPolicy {
+    + bool viewAny(User $user): bool
+    + bool view(User $user, Category $category): bool
+    + bool create(User $user): bool
+    + bool update(User $user, Category $category): bool
+    + bool delete(User $user, Category $category): bool
+    + bool deleteAny(User $user): bool
+    + bool forceDelete(User $user, Category $category): bool
+    + bool forceDeleteAny(User $user): bool
+    + bool restore(User $user, Category $category): bool
+    + bool restoreAny(User $user): bool
+    + bool replicate(User $user, Category $category): bool
+    + bool reorder(User $user): bool
+}
+
+class OrderPolicy {
+    + bool viewAny(User $user): bool
+    + bool view(User $user, Order $order): bool
+    + bool create(User $user): bool
+    + bool update(User $user, Order $order): bool
+    + bool delete(User $user, Order $order): bool
+}
+
+class ReviewPolicy {
+    + bool viewAny(User $user): bool
+    + bool view(User $user, Review $review): bool
+    + bool create(User $user): bool
+    + bool update(User $user, Review $review): bool
+    + bool delete(User $user, Review $review): bool
+    + bool restore(User $user, Review $review): bool
+    + bool forceDelete(User $user, Review $review): bool
+}
+
+class UserPolicy {
+    + bool viewAny(User $user): bool
+    + bool view(User $user, User $model): bool
+    + bool create(User $user): bool
+    + bool update(User $user, User $model): bool
+    + bool delete(User $user, User $model): bool
+}
+
+class WishlistPolicy {
+    + bool viewAny(User $user): bool
+    + bool view(User $user, Wishlist $wishlist): bool
+    + bool create(User $user): bool
+    + bool update(User $user, Wishlist $wishlist): bool
+    + bool delete(User $user, Wishlist $wishlist): bool
+    + bool deleteAny(User $user): bool
+    + bool restore(User $user, Wishlist $wishlist): bool
+    + bool forceDelete(User $user, Wishlist $wishlist): bool
+}
+
+class AuthServiceProvider {
+    - array $policies = [
+        Book::class => BookPolicy::class,
+        User::class => UserPolicy::class,
+        Category::class => CategoryPolicy::class,
+        Review::class => ReviewPolicy::class,
+        Wishlist::class => WishlistPolicy::class,
+        Order::class => OrderPolicy::class,
+    ]
+
+    + void boot(): void
+}
+
+class AppServiceProvider {
+}
+
+class BookInteractionServiceProvider {
+}
+
+class FilamentAdminPanelProvider {
+}
+
+class FilamentAppPanelProvider {
+}
+
+class RouteServiceProvider {
+}
+
+class FilamentShieldServiceProvider {
+}
+
+Dashboard --> GoogleBooksService : Uses
+Dashboard --> GoogleVisionService : Uses
+Dashboard --> Auth : Uses
+Dashboard --> Notification : Uses
+Dashboard --> Storage : Uses
+Dashboard --> Log : Uses
+Dashboard --> Session : Uses
+Dashboard --> Wishlist : Uses
+Dashboard --> Book : Uses
+Dashboard --> Category : Uses
+Dashboard --> RecommendationService : Uses
+Dashboard --> CartService : Uses
+
+AdminDashboard --> Auth : Uses
+AdminDashboard --> StatsOverview : Uses
+AdminDashboard --> OrdersChart : Uses
+AdminDashboard --> RevenueChart : Uses
+AdminDashboard --> BooksByCategoryChart : Uses
+AdminDashboard --> BookPriceRangeChart : Uses
+
+CategoryBooks --> Category : Uses
+CategoryBooks --> Book : Uses
+CategoryBooks --> Session : Uses
+CategoryBooks --> Log : Uses
+
+Checkout --> Order : Creates
+Checkout --> OrderItem : Creates
+Checkout --> Session : Uses
+Checkout --> Notification : Uses
+Checkout --> DB : Uses
+Checkout --> Auth : Uses
+Checkout --> Log : Uses
+Checkout --> BookInteractionService : Uses
+
+ViewBook --> Book : Uses
+ViewBook --> Review : Uses
+ViewBook --> Wishlist : Uses
+ViewBook --> Session : Uses
+ViewBook --> Notification : Uses
+ViewBook --> Auth : Uses
+ViewBook --> Log : Uses
+ViewBook --> BookInteractionService : Uses
+ViewBook --> WishlistService : Uses
+
+BookInteractionResource --> BookInteraction : Uses
+BookInteractionResource --> Forms : Uses
+BookInteractionResource --> Tables : Uses
+
+BookResource --> Book : Uses
+BookResource --> Forms : Uses
+BookResource --> Tables : Uses
+
+CategoryResource --> Category : Uses
+CategoryResource --> Forms : Uses
+CategoryResource --> Tables : Uses
+
+OrderItemResource --> OrderItem : Uses
+OrderItemResource --> Forms : Uses
+OrderItemResource --> Tables : Uses
+
+OrderResource --> Order : Uses
+OrderResource --> Forms : Uses
+OrderResource --> Tables : Uses
+
+ReviewResource --> Review : Uses
+ReviewResource --> Forms : Uses
+ReviewResource --> Tables : Uses
+
+UserResource --> User : Uses
+UserResource --> Forms : Uses
+UserResource --> Tables : Uses
+
+WishlistResource --> Wishlist : Uses
+WishlistResource --> Forms : Uses
+WishlistResource --> Tables : Uses
+
+Book --> Category : belongs to
+Book --> User : wishlisted by
+Book --> Review : has many
+Book --> BookInteraction : has many
+
+GoogleBooksService --> Book : Creates/Updates
+GoogleBooksService --> Category : Creates/Uses
+GoogleBooksService --> Http : Uses
+GoogleBooksService --> Log : Uses
+
+GoogleVisionService --> Log : Uses
+
+BookInteraction --> User : belongs to
+BookInteraction --> Book : belongs to
+
+Wishlist --> User : belongs to
+Wishlist --> Book : belongs to
+
+Category --> Book : has many
+
+Order --> User : belongs to
+Order --> OrderItem : has many
+
+OrderItem --> Order : belongs to
+OrderItem --> Book : belongs to
+
+Review --> User : belongs to
+Review --> Book : belongs to
+
+User --> Wishlist : has many
+User --> Review : has many
+User --> BookInteraction : has many
+User --> Order : has many
+User --> Book : purchasedBooks
+
+AuthServiceProvider --> BookPolicy : Registers
+AuthServiceProvider --> UserPolicy : Registers
+AuthServiceProvider --> CategoryPolicy : Registers
+AuthServiceProvider --> ReviewPolicy : Registers
+AuthServiceProvider --> WishlistPolicy : Registers
+AuthServiceProvider --> OrderPolicy : Registers
+
+AuthServiceProvider --> AppServiceProvider : Registers
+AuthServiceProvider --> BookInteractionServiceProvider : Registers
+AuthServiceProvider --> FilamentAdminPanelProvider : Registers
+AuthServiceProvider --> FilamentAppPanelProvider : Registers
+AuthServiceProvider --> RouteServiceProvider : Registers
+AuthServiceProvider --> FilamentShieldServiceProvider : Registers
+
+BookPolicy --> User : Manages
+CategoryPolicy --> User : Manages
+OrderPolicy --> User : Manages
+ReviewPolicy --> User : Manages
+UserPolicy --> User : Manages
+WishlistPolicy --> User : Manages
 @enduml
