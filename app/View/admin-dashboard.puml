@@ -1,0 +1,54 @@
+@startuml
+actor Admin
+participant "Login Page" as LoginPage
+participant "AuthenticationService" as AuthService
+participant "AdminDashboard" as AdminDashboard
+participant "StatsOverview" as StatsWidget
+participant "OrdersChart" as OrdersWidget
+participant "RevenueChart" as RevenueWidget
+participant "BooksByCategoryChart" as CategoryWidget
+participant "BookPriceRangeChart" as PriceWidget
+database "Database" as DB
+
+Admin -> LoginPage : Enter credentials
+LoginPage -> AuthService : Authenticate(credentials)
+AuthService --> LoginPage : Authentication successful
+LoginPage -> AdminDashboard : Redirect to AdminDashboard
+
+AdminDashboard -> AdminDashboard : mount()
+
+AdminDashboard -> StatsWidget : getStats()
+StatsWidget -> DB : Query User count
+StatsWidget -> DB : Query Book count
+StatsWidget -> DB : Query Order count
+StatsWidget -> DB : Calculate Total Revenue
+DB --> StatsWidget : Return data
+StatsWidget --> AdminDashboard : Return stats data
+
+AdminDashboard -> OrdersWidget : getData()
+OrdersWidget -> DB : Query Orders (select, order by created_at)
+DB --> OrdersWidget : Return order data
+OrdersWidget -> OrdersWidget : Process data (map to order number and amount)
+OrdersWidget --> AdminDashboard : Return processed orders chart data
+
+AdminDashboard -> RevenueChart : getData()
+RevenueChart -> DB : Query Orders (select, order by created_at)
+DB --> RevenueChart : Return order data
+RevenueChart -> RevenueChart : Calculate cumulative revenue
+RevenueChart --> AdminDashboard : Return cumulative revenue data
+
+AdminDashboard -> CategoryWidget : getData()
+CategoryWidget -> DB : Query Categories and Books (join, group by category)
+DB --> CategoryWidget : Return category and book count data
+CategoryWidget -> CategoryWidget : Process data (prepare for chart)
+CategoryWidget --> AdminDashboard : Return books by category data
+
+AdminDashboard -> PriceWidget : getData()
+PriceWidget -> DB : Query Books (group by price range)
+DB --> PriceWidget : Return book price range data
+PriceWidget -> PriceWidget : Process data (prepare for chart)
+PriceWidget --> AdminDashboard : Return book price range data
+
+AdminDashboard --> Admin : Display dashboard with widgets
+
+@enduml

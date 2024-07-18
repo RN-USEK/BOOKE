@@ -1,0 +1,19 @@
+@startuml
+actor User
+participant "Dashboard" as D
+participant "Auth" as A
+participant "Session" as S
+participant "User" as U
+
+User -> D: Enter credentials
+D -> A: Authenticate(credentials)
+A -> U: Validate(credentials)
+U --> A: Validation result
+A --> D: Authentication result
+alt Authentication successful
+    D -> S: Create session
+    D --> User: Show dashboard
+else Authentication failed
+    D --> User: Show error message
+end
+@enduml
