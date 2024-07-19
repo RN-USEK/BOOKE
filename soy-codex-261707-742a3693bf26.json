@@ -1,13 +1,1 @@
-{
-  "type": "service_account",
-  "project_id": "soy-codex-261707",
-  "private_key_id": "742a3693bf26c8247599fb3d3efd637504fb371c",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC2rPUA0h8KV7Sz\nL1Ng6qLmy0VHYdpJaQRkA7frbY8uT44AKnzGN3zT8f0VmrvtgasT5d6CGiZq3BQH\nXTOOh7qWs4591XDMFWm59Rdo5UaV3fqnqaZXJojP/sXC96aurPI4kzoviVtLlbVY\nQOBJfsFasr+IyrVqtaqyDtkbj1XejovaCOs87PI8I4zePk4tr4+atNVOduFNDe1z\n+oXNrG8q8J8VHtwzVv3X26Y/c9TEP3/P8iUmFuEg50SbModaVklr/lJ7hTE5Ucl0\nr9L0s9Q2Jd7YWZoe8FgB91TIAib/gDZM53uEg7xR/aA0H6hoiKerUUE0GWiiMPST\nQzRz0OAVAgMBAAECggEAUWZCikoXINGyKII3IiGL01HSnhtBXKLaHQL3KoYYXid+\n/B3ymZTSH9Nd1gmsIgo8xFIS02B5q/ZDSoDCX4mloE+EeBfq+lW0VfObqdc4m8Fd\nVuamw4DdR+mcD+Owt3dDO+iG7fXD46tjMl8+UiGUYSjzZi4FpvYqiMtK/RfiyJd1\niT5ISOZC+3+33eSHew8iwjnq/eBykM+VsjOf81J0ILMWKfLWEygBxyCwL9OQbBzO\ndX9PuKQmH39GPFrzPaUfu8t+o0Vq/5oGOKmljevgxXnS0o/ii5SYrYSBYffEVILl\n+V6I2FdoYAtXBdThStpipOjseuuF1/IFvJXph5eJpQKBgQDZw+OHJXDjqAQuCJPU\nRc4bk2ltwMssyufuoANPrVSE8uUt/rrklpWEbJvIEKh5ksiFYtFaPrB8Qb/fRLQ7\nuT8uYmoZSFyuV2HaIRqdJG01sVS/rpxJPFJlnE4TZZ15yZhcyBuyTuGDpDppKG9v\ntC18jrEv2e47GNvzPN9fESKecwKBgQDWv9yZtFD41OqTuYOcvNMIzj8utwsfHvUR\nEocC3uZn6pxbfLf3CKiR7ZlghfNIwH4QqdzMw0RJZsXLiaj/zhNHvLJ9SgUjHsQP\nvOs/sClRATjOVciY3o6WD73mlqN+JGx+89nRng4BLQP6so3kUr0A/M7DFHonpDXh\nEExfxf4dVwKBgED8qpwcWlI2Q/kQ6j0BD/8+wMnWLUwSyaB29EYE7iI28poFWPT6\n02gPmXXdMsoFOf5EfUG3T6flX0NcF4VzRR2slQkyhSYqQbN9CZo30rehUi9aBp38\neIKGYO589r/vn56gwVM3IynMCvpy7L6jQKfZVZt4KBZO1uUCF48hZ/ltAoGATPRy\nHA522cSKzycyl68+vLAUCiyD6sIQNe76vLedv21eXJaD4h2TMr//L4yw0shQJK6K\nNkJfLSKMDNUm34w8cn+XQriMwLocrjsX3jnFhIa4kZBCEy3l0LaRaZlfuytYSeIe\nkzRddmRoQaVMnZ5cpobxnQywfZYlzKInjEaKOn8CgYAfTSOXm9lWexDpLbN4Yklx\njy8M8DKZzM1GyhX5FxmtO/KiEF0MNBmvo91DUJcJ2BRNtDLtcr3TYVZCCSUBn5jp\nwwxundE2fDWY39p3ZgsYvFR0uE53ZtpW+Krq1hUQaoc14J6I1kwU8JrMOZoeft2o\n5B9bHc66rqIkDesT5+EbeA==\n-----END PRIVATE KEY-----\n",
-  "client_email": "bookstore-image-analysis@soy-codex-261707.iam.gserviceaccount.com",
-  "client_id": "114967956698557670379",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bookstore-image-analysis%40soy-codex-261707.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
+
