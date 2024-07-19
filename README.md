@@ -135,7 +135,7 @@ Visit `http://localhost:8000` in your browser to access the application.
 -   Explore the book catalog, add books to your wishlist, and make purchases
 -   Use the image upload feature to search for books based on cover images
 -   Leave reviews for purchased books
--   Access the admin panel when you login with admin or manager roles
+-   Access the admin dashboard when you login with admin or manager roles
 
 ## License
 
