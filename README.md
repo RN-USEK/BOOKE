@@ -126,7 +126,7 @@ Visit `http://localhost:8000` in your browser to access the application.
 -   Use the image upload feature to search for books based on cover images
 -   Leave reviews for purchased books
 -   Access the admin panel when you login with admin or manager roles
--   
+  
 ## License
 
 Booke is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
