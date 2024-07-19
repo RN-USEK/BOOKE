@@ -66,8 +66,17 @@ Booke is an advanced e-bookstore application built with Laravel and FilamentPHP.
     ```bash
     php artisan key:generate
     ```
+    
+6. **Set up your MySQL database:**
 
-6. **Configure your database in the `.env` file:**
+    - Create a new MySQL database for the project.
+    - Open your MySQL command line or management tool.
+    - Run the following command:
+        ```sql
+        CREATE DATABASE booke;
+        ```
+        
+7. **Configure your database in the `.env` file:**
 
     ```env
     DB_CONNECTION=mysql
@@ -77,15 +86,6 @@ Booke is an advanced e-bookstore application built with Laravel and FilamentPHP.
     DB_USERNAME=your_username
     DB_PASSWORD=your_password
     ```
-
-7. **Set up your MySQL database:**
-
-    - Create a new MySQL database for the project.
-    - Open your MySQL command line or management tool.
-    - Run the following command (replace 'booke' with your desired database name):
-        ```sql
-        CREATE DATABASE booke;
-        ```
 
 8. **Set up Google Books API and Google Vision AI:**
 
