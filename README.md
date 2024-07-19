@@ -78,7 +78,16 @@ Booke is an advanced e-bookstore application built with Laravel and FilamentPHP.
     DB_PASSWORD=your_password
     ```
 
-7. **Set up Google Books API and Google Vision AI:**
+7. **Set up your MySQL database:**
+
+    - Create a new MySQL database for the project.
+    - Open your MySQL command line or management tool.
+    - Run the following command (replace 'booke' with your desired database name):
+        ```sql
+        CREATE DATABASE booke;
+        ```
+
+8. **Set up Google Books API and Google Vision AI:**
 
     - Add your Google Books API key to the `.env` file:
         ```env
@@ -89,25 +98,26 @@ Booke is an advanced e-bookstore application built with Laravel and FilamentPHP.
         GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/credentials.json
         ```
 
-8. **Run database migrations:**
+9. **Run database migrations:**
 
     ```bash
     php artisan migrate
     ```
 
-9. **Seed the database with initial data:**
+10. **Seed the database with initial data:**
 
     ```bash
     php artisan db:seed
     ```
 
-10. **Compile assets:**
+11. **Compile assets:**
 
     ```bash
     npm run dev
     ```
 
-11. **Start the development server:**
+12. **Start the development server:**
+
     ```bash
     php artisan serve
     ```
@@ -126,7 +136,7 @@ Visit `http://localhost:8000` in your browser to access the application.
 -   Use the image upload feature to search for books based on cover images
 -   Leave reviews for purchased books
 -   Access the admin panel when you login with admin or manager roles
-  
+
 ## License
 
 Booke is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
